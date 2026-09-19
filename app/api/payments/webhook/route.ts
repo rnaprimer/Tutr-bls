@@ -45,8 +45,36 @@ export async function POST(req: NextRequest) {
       event === "payment.authorized"
     ) {
       const admin = createAdminClient();
+      const paymentType = paymentEntity?.notes?.payment_type || orderEntity?.notes?.payment_type;
 
-      // Find target connection either by razorpay_order_id or connectionId from notes
+      // 1. Check for Tutor Onboarding Payment
+      if (paymentType === "tutor_onboarding" || orderId) {
+        let onbQuery = admin
+          .from("tutor_onboarding_payments")
+          .select("id, status");
+
+        if (orderId) {
+          onbQuery = onbQuery.eq("razorpay_order_id", orderId);
+        } else if (paymentEntity?.notes?.application_id) {
+          onbQuery = onbQuery.eq("application_id", paymentEntity.notes.application_id);
+        }
+
+        const { data: onbPayment } = await onbQuery.maybeSingle();
+
+        if (onbPayment) {
+          // Complete onboarding payment idempotently
+          await admin.rpc("complete_tutor_onboarding_payment", {
+            p_payment_id: onbPayment.id,
+            p_razorpay_order_id: orderId || null,
+            p_razorpay_payment_id: paymentId,
+            p_razorpay_signature: signature,
+          });
+
+          return NextResponse.json({ status: "ok", type: "onboarding" });
+        }
+      }
+
+      // 2. Check for Student Connection Payment
       let query = admin.from("tutor_connections").select("id, status");
       if (orderId) {
         query = query.eq("razorpay_order_id", orderId);
@@ -57,13 +85,15 @@ export async function POST(req: NextRequest) {
       const { data: conn } = await query.maybeSingle();
 
       if (conn) {
-        // Idempotent unlock
+        // Idempotent connection unlock
         await admin.rpc("unlock_connection_after_payment", {
           p_connection_id: conn.id,
           p_razorpay_order_id: orderId || null,
           p_razorpay_payment_id: paymentId,
           p_razorpay_signature: signature,
         });
+
+        return NextResponse.json({ status: "ok", type: "connection" });
       }
     }
 

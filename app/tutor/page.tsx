@@ -60,6 +60,52 @@ export default async function TutorPage() {
     primaryApplication = sorted[0] as SanitizedTutorApplication;
   }
 
+  // Authoritative Onboarding Fee
+  const fee = Number(process.env.TUTR_TUTOR_ONBOARDING_FEE_INR);
+  if (!Number.isInteger(fee) || fee <= 0) {
+    throw new Error("TUTR_TUTOR_ONBOARDING_FEE_INR is not configured correctly");
+  }
+
+  // Query onboarding payment status and profile if application is approved
+  let onboardingPaymentStatus: "UNPAID" | "PENDING" | "PAID" | "FAILED" = "UNPAID";
+  let tutorProfileId: string | null = null;
+
+  if (primaryApplication && primaryApplication.status === "APPROVED") {
+    const { data: profile } = await supabase
+      .from("tutor_profiles")
+      .select("id, is_active")
+      .eq("application_id", primaryApplication.id)
+      .maybeSingle();
+
+    if (profile) {
+      tutorProfileId = profile.id;
+    }
+
+    const { data: payments } = await supabase
+      .from("tutor_onboarding_payments")
+      .select("id, status")
+      .eq("application_id", primaryApplication.id)
+      .order("created_at", { ascending: false });
+
+    if (payments && payments.length > 0) {
+      const hasPaid = payments.some((p) => p.status === "PAID");
+      if (hasPaid || profile?.is_active) {
+        onboardingPaymentStatus = "PAID";
+      } else {
+        const latest = payments[0];
+        if (latest.status === "FAILED" || latest.status === "CANCELLED") {
+          onboardingPaymentStatus = "FAILED";
+        } else {
+          onboardingPaymentStatus = "PENDING";
+        }
+      }
+    } else if (profile?.is_active) {
+      onboardingPaymentStatus = "PAID";
+    } else {
+      onboardingPaymentStatus = "UNPAID";
+    }
+  }
+
   const formUrl = process.env.NEXT_PUBLIC_TUTOR_APPLICATION_FORM_URL;
 
   return (
@@ -94,6 +140,9 @@ export default async function TutorPage() {
           application={primaryApplication}
           displayName={displayName}
           formUrl={formUrl}
+          onboardingPaymentStatus={onboardingPaymentStatus}
+          tutorProfileId={tutorProfileId}
+          feeInr={fee}
         />
       </main>
 

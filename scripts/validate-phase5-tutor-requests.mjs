@@ -191,6 +191,7 @@ async function runPhase5Validation() {
         fee: "2500",
         availability: "Mon, Wed, Fri (5:00 PM - 7:00 PM)",
         is_verified: true,
+        is_active: true,
       })
       .select("id")
       .single();
@@ -229,6 +230,7 @@ async function runPhase5Validation() {
         fee: "2000",
         availability: "Tue, Thu, Sat",
         is_verified: true,
+        is_active: true,
       })
       .select("id")
       .single();

@@ -24,11 +24,10 @@ export async function generateMetadata({ params }: PageProps) {
   const supabase = await createClient();
 
   const { data: tutor } = await supabase
-    .from("tutor_profiles")
+    .from("public_tutor_profiles")
     .select("display_name, locality")
     .eq("id", id)
-    .eq("is_verified", true)
-    .single();
+    .maybeSingle();
 
   if (!tutor) {
     return {
@@ -46,7 +45,19 @@ export default async function TutorProfilePage({ params }: PageProps) {
   const { id } = await params;
   const supabase = await createClient();
 
-  // 1. Fetch public profile strictly filtered by is_verified = true
+  // 1. Verify tutor is eligible for public discovery:
+  // Must satisfy is_verified = true, is_active = true, application APPROVED, and onboarding payment PAID
+  const { data: publicCheck } = await supabase
+    .from("public_tutor_profiles")
+    .select("id")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (!publicCheck) {
+    notFound();
+  }
+
+  // 2. Fetch full public profile
   const { data: tutor, error: tutorError } = await supabase
     .from("tutor_profiles")
     .select(
@@ -67,6 +78,7 @@ export default async function TutorProfilePage({ params }: PageProps) {
     )
     .eq("id", id)
     .eq("is_verified", true)
+    .eq("is_active", true)
     .single();
 
   if (tutorError || !tutor) {

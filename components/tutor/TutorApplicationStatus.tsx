@@ -18,6 +18,8 @@ import {
   ArrowRight,
 } from "lucide-react";
 
+import { TutorOnboardingPaymentCard } from "./TutorOnboardingPaymentCard";
+
 export interface SanitizedTutorApplication {
   id: string;
   full_name: string;
@@ -31,6 +33,9 @@ interface TutorApplicationStatusProps {
   application: SanitizedTutorApplication | null;
   displayName: string;
   formUrl?: string;
+  onboardingPaymentStatus?: "UNPAID" | "PENDING" | "PAID" | "FAILED";
+  tutorProfileId?: string | null;
+  feeInr?: number;
 }
 
 function isValidGoogleFormUrl(url?: string): boolean {
@@ -52,6 +57,9 @@ export function TutorApplicationStatus({
   application,
   displayName,
   formUrl,
+  onboardingPaymentStatus = "UNPAID",
+  tutorProfileId,
+  feeInr = 149,
 }: TutorApplicationStatusProps) {
   const isFormConfigured = isValidGoogleFormUrl(formUrl);
 
@@ -256,6 +264,20 @@ export function TutorApplicationStatus({
   // STATE D: APPROVED
   // ----------------------------------------------------
   if (application.status === "APPROVED") {
+    // If onboarding payment is pending/unpaid, require the one-time ₹149 payment
+    if (onboardingPaymentStatus !== "PAID") {
+      return (
+        <div className="max-w-lg w-full">
+          <TutorOnboardingPaymentCard
+            applicationId={application.id}
+            tutorProfileId={tutorProfileId}
+            feeInr={feeInr}
+            initialStatus={onboardingPaymentStatus === "FAILED" ? "FAILED" : "UNPAID"}
+          />
+        </div>
+      );
+    }
+
     return (
       <div className="max-w-lg w-full bg-white rounded-3xl border border-emerald-200 p-8 sm:p-12 shadow-sm text-center">
         <div className="w-16 h-16 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 mx-auto mb-6">

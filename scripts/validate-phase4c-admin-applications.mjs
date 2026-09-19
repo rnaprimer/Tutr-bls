@@ -335,13 +335,32 @@ async function runValidation() {
     assert(profileRecord.display_name === "Pooja Mohanty", "Profile display_name populated from application");
     assert(profileRecord.locality === "FM College Road, Balasore", "Profile locality populated from application");
 
-    // 15. Verify Approved Tutor appears in public_tutor_profiles view
+    // 15. Verify Approved Tutor is initially INACTIVE and requires onboarding payment
+    const { data: unpaidProfile } = await supabaseAdmin
+      .from("public_tutor_profiles")
+      .select("*")
+      .eq("id", profileRecord.id)
+      .maybeSingle();
+    assert(!unpaidProfile, "Unpaid approved tutor is strictly excluded from public_tutor_profiles view");
+
+    // Complete onboarding payment and activate profile
+    await supabaseAdmin.from("tutor_onboarding_payments").insert({
+      application_id: applicationId,
+      tutor_profile_id: profileRecord.id,
+      user_id: applicantUser.id,
+      amount: 149,
+      status: "PAID",
+      paid_at: new Date().toISOString(),
+    });
+    await supabaseAdmin.from("tutor_profiles").update({ is_active: true }).eq("id", profileRecord.id);
+
+    // Verify Paid Approved Tutor appears in public_tutor_profiles view
     const { data: publicProfile, error: pubErr } = await supabaseAdmin
       .from("public_tutor_profiles")
       .select("*")
       .eq("id", profileRecord.id)
       .single();
-    assert(!pubErr && Boolean(publicProfile), "Approved tutor appears in public_tutor_profiles marketplace view");
+    assert(!pubErr && Boolean(publicProfile), "Approved tutor appears in public_tutor_profiles marketplace view after onboarding payment");
     assert(publicProfile.is_verified === true, "View confirms is_verified = true");
 
     // 16. Verify Private Application Data is NOT exposed in public_tutor_profiles

@@ -241,10 +241,21 @@ async function runPhase6Validation() {
         experience: "12 years",
         fee: "2500",
         is_verified: true,
+        is_active: true,
       })
       .select("id")
       .single();
     tutorProfile = tp;
+
+    // Satisfy onboarding payment requirement for marketplace visibility
+    await supabaseAdmin.from("tutor_onboarding_payments").insert({
+      application_id: tutorApp.id,
+      tutor_profile_id: tutorProfile.id,
+      user_id: tutorUser.id,
+      amount: 149,
+      status: "PAID",
+      paid_at: new Date().toISOString(),
+    });
 
     // Link subject/class to tutor
     await supabaseAdmin.from("tutor_subjects").insert({

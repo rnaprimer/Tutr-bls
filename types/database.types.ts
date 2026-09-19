@@ -384,6 +384,83 @@ export type Database = {
           },
         ]
       }
+      tutor_onboarding_payments: {
+        Row: {
+          amount: number
+          application_id: string
+          created_at: string
+          currency: string
+          id: string
+          paid_at: string | null
+          razorpay_order_id: string | null
+          razorpay_payment_id: string | null
+          razorpay_signature: string | null
+          status: string
+          tutor_profile_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          application_id: string
+          created_at?: string
+          currency?: string
+          id?: string
+          paid_at?: string | null
+          razorpay_order_id?: string | null
+          razorpay_payment_id?: string | null
+          razorpay_signature?: string | null
+          status?: string
+          tutor_profile_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          application_id?: string
+          created_at?: string
+          currency?: string
+          id?: string
+          paid_at?: string | null
+          razorpay_order_id?: string | null
+          razorpay_payment_id?: string | null
+          razorpay_signature?: string | null
+          status?: string
+          tutor_profile_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tutor_onboarding_payments_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "tutor_applications"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tutor_onboarding_payments_tutor_profile_id_fkey"
+            columns: ["tutor_profile_id"]
+            isOneToOne: false
+            referencedRelation: "public_tutor_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tutor_onboarding_payments_tutor_profile_id_fkey"
+            columns: ["tutor_profile_id"]
+            isOneToOne: false
+            referencedRelation: "tutor_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tutor_onboarding_payments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tutor_profiles: {
         Row: {
           application_id: string | null
@@ -394,6 +471,7 @@ export type Database = {
           experience: string | null
           fee: string | null
           id: string
+          is_active: boolean
           is_verified: boolean
           locality: string | null
           photo_url: string | null
@@ -411,6 +489,7 @@ export type Database = {
           experience?: string | null
           fee?: string | null
           id?: string
+          is_active?: boolean
           is_verified?: boolean
           locality?: string | null
           photo_url?: string | null
@@ -428,6 +507,7 @@ export type Database = {
           experience?: string | null
           fee?: string | null
           id?: string
+          is_active?: boolean
           is_verified?: boolean
           locality?: string | null
           photo_url?: string | null
@@ -662,6 +742,15 @@ export type Database = {
         Returns: Json
       }
       cancel_tutor_request: { Args: { p_request_id: string }; Returns: Json }
+      complete_tutor_onboarding_payment: {
+        Args: {
+          p_payment_id: string
+          p_razorpay_order_id: string
+          p_razorpay_payment_id: string
+          p_razorpay_signature: string
+        }
+        Returns: Json
+      }
       create_tutor_request: {
         Args: {
           p_class_id: string

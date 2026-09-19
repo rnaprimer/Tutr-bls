@@ -139,6 +139,22 @@ export default async function ApplicationsQueuePage({
   const totalFiltered = filteredTotal || 0;
   const totalPages = Math.ceil(totalFiltered / PAGE_SIZE) || 1;
 
+  // Fetch onboarding payments for visible applications
+  const appIds = (applications || []).map((a) => a.id);
+  const { data: onboardingPayments } = appIds.length > 0
+    ? await supabase
+        .from("tutor_onboarding_payments")
+        .select("application_id, status, amount")
+        .in("application_id", appIds)
+    : { data: [] };
+
+  const paymentMap = new Map<string, string>();
+  (onboardingPayments || []).forEach((p) => {
+    if (p.status === "PAID" || !paymentMap.has(p.application_id)) {
+      paymentMap.set(p.application_id, p.status);
+    }
+  });
+
   return (
     <div className="min-h-screen flex flex-col justify-between bg-beige-light/40">
       {/* Top Navbar */}
@@ -383,10 +399,21 @@ export default async function ApplicationsQueuePage({
                           </span>
                         )}
                         {app.status === "APPROVED" && (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
-                            <CheckCircle className="w-3 h-3" />
-                            APPROVED
-                          </span>
+                          <>
+                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                              <CheckCircle className="w-3 h-3" />
+                              APPROVED
+                            </span>
+                            <span
+                              className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                                paymentMap.get(app.id) === "PAID"
+                                  ? "bg-emerald-100 text-emerald-800 border border-emerald-300"
+                                  : "bg-amber-100 text-amber-800 border border-amber-300"
+                              }`}
+                            >
+                              Fee: {paymentMap.get(app.id) === "PAID" ? "PAID (₹149)" : "UNPAID"}
+                            </span>
+                          </>
                         )}
                         {app.status === "REJECTED" && (
                           <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-800 border border-rose-200">

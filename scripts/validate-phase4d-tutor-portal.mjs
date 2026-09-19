@@ -331,14 +331,37 @@ async function runValidation() {
     console.log("==================================================");
 
     const cookieApproved = await getAuthCookie(userApprovedEmail, password);
-    const approvedRes = await fetchUrl("/tutor", {
+    const approvedUnpaidRes = await fetchUrl("/tutor", {
       headers: { cookie: cookieApproved },
     });
-    assert(approvedRes.statusCode === 200, "User with APPROVED application returns HTTP 200 OK");
-    assert(approvedRes.body.includes("You&#x27;re a Verified Tutr Tutor") || approvedRes.body.includes("You're a Verified Tutr Tutor"), "Renders headline 'You're a Verified Tutr Tutor'");
-    assert(approvedRes.body.includes("APPROVED"), "Displays APPROVED status badge");
-    assert(approvedRes.body.includes("Tutor Dashboard"), "Displays Tutor Dashboard section");
-    assert(approvedRes.body.includes("Coming Soon"), "Clearly indicates 'Coming Soon' (no Phase 5 code)");
+    assert(approvedUnpaidRes.statusCode === 200, "User with APPROVED application returns HTTP 200 OK");
+    assert(
+      approvedUnpaidRes.body.includes("Complete your onboarding by paying the one-time onboarding fee") ||
+        approvedUnpaidRes.body.includes("Complete Onboarding"),
+      "Renders onboarding payment requirement for approved unpaid tutor"
+    );
+
+    // Complete onboarding payment and activate profile for dashboard view
+    await supabaseAdmin.from("tutor_onboarding_payments").insert({
+      application_id: appApproved.id,
+      user_id: userApproved.id,
+      amount: 149,
+      status: "PAID",
+      paid_at: new Date().toISOString(),
+    });
+    await supabaseAdmin.from("tutor_profiles").update({ is_active: true }).eq("application_id", appApproved.id);
+
+    const approvedPaidRes = await fetchUrl("/tutor", {
+      headers: { cookie: cookieApproved },
+    });
+    assert(
+      approvedPaidRes.body.includes("You&#x27;re a Verified Tutr Tutor") ||
+        approvedPaidRes.body.includes("You're a Verified Tutr Tutor"),
+      "Renders headline 'You're a Verified Tutr Tutor' after onboarding payment"
+    );
+    assert(approvedPaidRes.body.includes("APPROVED"), "Displays APPROVED status badge");
+    assert(approvedPaidRes.body.includes("Tutor Dashboard"), "Displays Tutor Dashboard section");
+    assert(approvedPaidRes.body.includes("Coming Soon"), "Clearly indicates 'Coming Soon'");
 
     // ====================================================
     // SUITE 6: REJECTED State

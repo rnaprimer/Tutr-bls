@@ -18,6 +18,7 @@ import {
   Clock,
   Layers,
   Award,
+  CreditCard,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { verifyAdminSession } from "@/lib/auth/admin";
@@ -92,6 +93,19 @@ export default async function ApplicationDetailPage({
   if (error || !application) {
     notFound();
   }
+
+  // Fetch onboarding payment record if available
+  const { data: onboardingPayments } = await supabase
+    .from("tutor_onboarding_payments")
+    .select("id, amount, currency, status, razorpay_order_id, razorpay_payment_id, paid_at, created_at")
+    .eq("application_id", id)
+    .order("created_at", { ascending: false });
+
+  const activePayment =
+    onboardingPayments?.find((p) => p.status === "PAID") ||
+    onboardingPayments?.[0] ||
+    null;
+  const onboardingStatus = activePayment?.status || "UNPAID";
 
   // Fetch reviewer details if reviewed_by is populated
   let reviewerName: string | null = null;
@@ -256,6 +270,69 @@ export default async function ApplicationDetailPage({
           status={application.status}
           rejectionReason={application.rejection_reason}
         />
+
+        {/* Onboarding Fee & Payment Details (for APPROVED applications) */}
+        {application.status === "APPROVED" && (
+          <div className="bg-white rounded-3xl border border-navy/10 p-6 shadow-sm mb-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-base font-bold text-navy flex items-center gap-2">
+                <CreditCard className="w-4 h-4 text-teal" />
+                Tutor Onboarding Fee
+              </h3>
+              <span
+                className={`inline-flex items-center gap-1 text-[11px] font-bold px-3 py-1 rounded-full uppercase tracking-wider ${
+                  onboardingStatus === "PAID"
+                    ? "bg-emerald-100 text-emerald-800 border border-emerald-200"
+                    : onboardingStatus === "PENDING"
+                    ? "bg-sky-100 text-sky-800 border border-sky-200"
+                    : "bg-amber-100 text-amber-800 border border-amber-200"
+                }`}
+              >
+                {onboardingStatus === "PAID" && <ShieldCheck className="w-3.5 h-3.5" />}
+                {onboardingStatus}
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+              <div className="p-3 rounded-2xl bg-beige-light/60 border border-navy/5">
+                <span className="text-navy/60 block mb-1">Application</span>
+                <span className="font-bold text-navy">APPROVED</span>
+              </div>
+
+              <div className="p-3 rounded-2xl bg-beige-light/60 border border-navy/5">
+                <span className="text-navy/60 block mb-1">Fee Amount</span>
+                <span className="font-bold text-navy">
+                  ₹{activePayment?.amount || 149} {activePayment?.currency || "INR"}
+                </span>
+              </div>
+
+              <div className="p-3 rounded-2xl bg-beige-light/60 border border-navy/5">
+                <span className="text-navy/60 block mb-1">Razorpay Order ID</span>
+                <span className="font-mono text-navy font-semibold truncate block">
+                  {activePayment?.razorpay_order_id || "—"}
+                </span>
+              </div>
+
+              <div className="p-3 rounded-2xl bg-beige-light/60 border border-navy/5">
+                <span className="text-navy/60 block mb-1">Razorpay Payment ID</span>
+                <span className="font-mono text-navy font-semibold truncate block">
+                  {activePayment?.razorpay_payment_id || "—"}
+                </span>
+              </div>
+            </div>
+
+            {activePayment?.paid_at && (
+              <div className="mt-3 pt-3 border-t border-navy/5 text-xs text-navy/70 flex items-center justify-between">
+                <span>Paid At:</span>
+                <span className="font-mono font-medium text-navy">
+                  {new Date(activePayment.paid_at).toLocaleString("en-IN", {
+                    timeZone: "Asia/Kolkata",
+                  })}
+                </span>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Two-Column Detail Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
