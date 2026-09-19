@@ -299,12 +299,7 @@ BEGIN
     FROM public.students
     WHERE user_id = v_user_id;
 
-    -- If user role was 'USER', set it to 'STUDENT'
-    IF v_user_role = 'USER'::public.user_role THEN
-        UPDATE public.users
-        SET role = 'STUDENT'::public.user_role, updated_at = clock_timestamp()
-        WHERE id = v_user_id;
-    END IF;
+
 
     -- Validate required parameters
     IF p_tutor_id IS NULL THEN
