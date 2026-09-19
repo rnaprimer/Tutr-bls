@@ -60,11 +60,10 @@ export default async function TutorPage() {
     primaryApplication = sorted[0] as SanitizedTutorApplication;
   }
 
-  // Authoritative Onboarding Fee
-  const fee = Number(process.env.TUTR_TUTOR_ONBOARDING_FEE_INR);
-  if (!Number.isInteger(fee) || fee <= 0) {
-    throw new Error("TUTR_TUTOR_ONBOARDING_FEE_INR is not configured correctly");
-  }
+  // Authoritative Onboarding Fee (fallback to 149 if unset to prevent 500 error during SSR)
+  const rawFee = process.env.TUTR_TUTOR_ONBOARDING_FEE_INR;
+  const parsedFee = Number(rawFee || 149);
+  const fee = Number.isInteger(parsedFee) && parsedFee > 0 ? parsedFee : 149;
 
   // Query onboarding payment status and profile if application is approved
   let onboardingPaymentStatus: "UNPAID" | "PENDING" | "PAID" | "FAILED" = "UNPAID";

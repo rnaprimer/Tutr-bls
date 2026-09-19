@@ -92,7 +92,7 @@ export async function POST() {
     }
 
     // 5. Strict Server Authority for Amount
-    const fee = Number(process.env.TUTR_TUTOR_ONBOARDING_FEE_INR);
+    const fee = Number(process.env.TUTR_TUTOR_ONBOARDING_FEE_INR || 149);
     if (!Number.isInteger(fee) || fee <= 0) {
       throw new Error("TUTR_TUTOR_ONBOARDING_FEE_INR is not configured correctly");
     }
