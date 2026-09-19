@@ -29,6 +29,7 @@ export function Navbar() {
   }, [mobileMenuOpen]);
 
   const navLinks = [
+    { label: "Find Tutors", href: "/tutors" },
     { label: "About", href: "/#about" },
     { label: "How it works", href: "/#how-it-works" },
     { label: "Contact", href: "/#contact" },

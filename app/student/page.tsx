@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { BookOpen, MapPin, ArrowLeft, User } from "lucide-react";
+import { BookOpen, MapPin, ArrowLeft, User, ShieldCheck } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { SignOutButton } from "@/components/SignOutButton";
 
@@ -69,18 +69,74 @@ export default async function StudentPage() {
           </div>
 
           <h1 className="text-2xl sm:text-3xl font-extrabold text-navy mb-2">
-            Welcome to Tutr, {displayName}
+            Welcome, {displayName}
           </h1>
 
-          <p className="text-sm font-semibold text-teal mb-6">
+          <p className="text-sm font-semibold text-teal mb-8">
             Student Portal
           </p>
 
-          <div className="p-4 rounded-2xl bg-beige-light/80 border border-navy/10 text-sm text-navy/80 mb-8 leading-relaxed">
-            <p className="font-semibold text-navy mb-1">Tutor discovery is coming next.</p>
-            <p className="text-xs text-navy/70">
-              We are finalizing the local tutor marketplace for Balasore students and parents.
-            </p>
+          {/* Action Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8 text-left">
+            <Link
+              href="/tutors"
+              className="p-5 rounded-2xl bg-beige-light/70 hover:bg-beige-light border border-navy/10 transition-all hover:shadow-sm group flex flex-col justify-between"
+            >
+              <div>
+                <div className="w-10 h-10 rounded-xl bg-teal/15 text-teal-dark flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+                  <BookOpen className="w-5 h-5 text-teal" />
+                </div>
+                <h2 className="text-sm font-bold text-navy mb-1">
+                  Find a Tutor
+                </h2>
+                <p className="text-xs text-navy/70 leading-normal">
+                  Explore verified educators across Balasore localities. Filter by subject, class, and fee.
+                </p>
+              </div>
+              <span className="text-xs font-semibold text-teal-dark mt-4 inline-flex items-center gap-1">
+                Browse Marketplace →
+              </span>
+            </Link>
+
+            <Link
+              href="/student/requests"
+              className="p-5 rounded-2xl bg-beige-light/70 hover:bg-beige-light border border-navy/10 transition-all hover:shadow-sm group flex flex-col justify-between"
+            >
+              <div>
+                <div className="w-10 h-10 rounded-xl bg-sky/50 text-navy flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+                  <MapPin className="w-5 h-5 text-teal" />
+                </div>
+                <h2 className="text-sm font-bold text-navy mb-1">
+                  My Requests
+                </h2>
+                <p className="text-xs text-navy/70 leading-normal">
+                  View and manage your submitted tutor inquiries, pending reviews, and responses.
+                </p>
+              </div>
+              <span className="text-xs font-semibold text-teal-dark mt-4 inline-flex items-center gap-1">
+                View Requests →
+              </span>
+            </Link>
+
+            <Link
+              href="/student/connections"
+              className="p-5 rounded-2xl bg-beige-light/70 hover:bg-beige-light border border-navy/10 transition-all hover:shadow-sm group flex flex-col justify-between"
+            >
+              <div>
+                <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+                  <ShieldCheck className="w-5 h-5 text-emerald-700" />
+                </div>
+                <h2 className="text-sm font-bold text-navy mb-1">
+                  My Connections
+                </h2>
+                <p className="text-xs text-navy/70 leading-normal">
+                  Unlock educator contact details and manage your active tuition connections.
+                </p>
+              </div>
+              <span className="text-xs font-semibold text-teal-dark mt-4 inline-flex items-center gap-1">
+                View Connections →
+              </span>
+            </Link>
           </div>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">

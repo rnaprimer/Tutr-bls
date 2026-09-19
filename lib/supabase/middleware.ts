@@ -14,12 +14,24 @@ export function sanitizeNextUrl(next: string | null | undefined): string {
     return "/";
   }
 
-  const allowedRoutes = ["/student", "/tutor", "/admin", "/admin/applications"];
+  const allowedRoutes = [
+    "/student",
+    "/student/requests",
+    "/student/connections",
+    "/tutor",
+    "/tutor/requests",
+    "/admin",
+    "/admin/applications",
+    "/tutors",
+  ];
   const sanitized = next.trim();
 
   if (
     allowedRoutes.includes(sanitized) ||
-    (sanitized.startsWith("/admin/applications/") && !sanitized.includes(".."))
+    ((sanitized.startsWith("/admin/applications/") ||
+      sanitized.startsWith("/tutors/") ||
+      sanitized.startsWith("/student/connections/")) &&
+      !sanitized.includes(".."))
   ) {
     return sanitized;
   }
@@ -64,10 +76,15 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const pathname = request.nextUrl.pathname;
+  // /tutors and /tutors/* are public marketplace discovery;
+  // /student, /student/*, /tutor, /tutor/*, /admin, /admin/* are protected portals.
   const isProtectedPath =
-    pathname.startsWith("/student") ||
-    pathname.startsWith("/tutor") ||
-    pathname.startsWith("/admin");
+    pathname === "/student" ||
+    pathname.startsWith("/student/") ||
+    pathname === "/tutor" ||
+    pathname.startsWith("/tutor/") ||
+    pathname === "/admin" ||
+    pathname.startsWith("/admin/");
 
   // If user is unauthenticated and tries to access a protected route,
   // redirect to canonical login with the sanitized next path.

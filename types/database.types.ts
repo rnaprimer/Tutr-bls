@@ -88,18 +88,21 @@ export type Database = {
         Row: {
           created_at: string
           id: string
+          phone: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
           created_at?: string
           id?: string
+          phone?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
           created_at?: string
           id?: string
+          phone?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -298,6 +301,89 @@ export type Database = {
           },
         ]
       }
+      tutor_connections: {
+        Row: {
+          amount: number
+          contact_unlocked_at: string | null
+          created_at: string
+          currency: string
+          id: string
+          paid_at: string | null
+          payment_status: Database["public"]["Enums"]["payment_status"]
+          razorpay_order_id: string | null
+          razorpay_payment_id: string | null
+          razorpay_signature: string | null
+          request_id: string
+          status: Database["public"]["Enums"]["connection_status"]
+          student_id: string
+          tutor_id: string
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          contact_unlocked_at?: string | null
+          created_at?: string
+          currency?: string
+          id?: string
+          paid_at?: string | null
+          payment_status?: Database["public"]["Enums"]["payment_status"]
+          razorpay_order_id?: string | null
+          razorpay_payment_id?: string | null
+          razorpay_signature?: string | null
+          request_id: string
+          status?: Database["public"]["Enums"]["connection_status"]
+          student_id: string
+          tutor_id: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          contact_unlocked_at?: string | null
+          created_at?: string
+          currency?: string
+          id?: string
+          paid_at?: string | null
+          payment_status?: Database["public"]["Enums"]["payment_status"]
+          razorpay_order_id?: string | null
+          razorpay_payment_id?: string | null
+          razorpay_signature?: string | null
+          request_id?: string
+          status?: Database["public"]["Enums"]["connection_status"]
+          student_id?: string
+          tutor_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tutor_connections_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: true
+            referencedRelation: "tutor_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tutor_connections_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tutor_connections_tutor_id_fkey"
+            columns: ["tutor_id"]
+            isOneToOne: false
+            referencedRelation: "public_tutor_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tutor_connections_tutor_id_fkey"
+            columns: ["tutor_id"]
+            isOneToOne: false
+            referencedRelation: "tutor_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tutor_profiles: {
         Row: {
           application_id: string | null
@@ -363,6 +449,81 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: true
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tutor_requests: {
+        Row: {
+          class_id: string
+          created_at: string
+          id: string
+          message: string | null
+          responded_at: string | null
+          status: Database["public"]["Enums"]["tutor_request_status"]
+          student_id: string
+          subject_id: string
+          tutor_id: string
+          updated_at: string
+        }
+        Insert: {
+          class_id: string
+          created_at?: string
+          id?: string
+          message?: string | null
+          responded_at?: string | null
+          status?: Database["public"]["Enums"]["tutor_request_status"]
+          student_id: string
+          subject_id: string
+          tutor_id: string
+          updated_at?: string
+        }
+        Update: {
+          class_id?: string
+          created_at?: string
+          id?: string
+          message?: string | null
+          responded_at?: string | null
+          status?: Database["public"]["Enums"]["tutor_request_status"]
+          student_id?: string
+          subject_id?: string
+          tutor_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tutor_requests_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tutor_requests_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tutor_requests_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tutor_requests_tutor_id_fkey"
+            columns: ["tutor_id"]
+            isOneToOne: false
+            referencedRelation: "public_tutor_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tutor_requests_tutor_id_fkey"
+            columns: ["tutor_id"]
+            isOneToOne: false
+            referencedRelation: "tutor_profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -483,8 +644,26 @@ export type Database = {
       }
     }
     Functions: {
+      accept_tutor_request:
+        | { Args: { p_request_id: string }; Returns: Json }
+        | { Args: { p_amount?: number; p_request_id: string }; Returns: Json }
       approve_tutor_application: {
         Args: { p_application_id: string }
+        Returns: Json
+      }
+      cancel_tutor_request: { Args: { p_request_id: string }; Returns: Json }
+      create_tutor_request: {
+        Args: {
+          p_class_id: string
+          p_message?: string
+          p_subject_id: string
+          p_tutor_id: string
+        }
+        Returns: Json
+      }
+      decline_tutor_request: { Args: { p_request_id: string }; Returns: Json }
+      get_unlocked_connection_contacts: {
+        Args: { p_connection_id: string }
         Returns: Json
       }
       ingest_google_form_application: {
@@ -515,9 +694,21 @@ export type Database = {
         Args: { p_application_id: string }
         Returns: Json
       }
+      unlock_connection_after_payment: {
+        Args: {
+          p_connection_id: string
+          p_razorpay_order_id: string
+          p_razorpay_payment_id: string
+          p_razorpay_signature: string
+        }
+        Returns: Json
+      }
     }
     Enums: {
       application_status: "PENDING" | "UNDER_REVIEW" | "APPROVED" | "REJECTED"
+      connection_status: "PENDING_PAYMENT" | "CONTACT_UNLOCKED" | "CANCELLED"
+      payment_status: "PENDING" | "SUCCESS" | "FAILED"
+      tutor_request_status: "PENDING" | "ACCEPTED" | "DECLINED" | "CANCELLED"
       user_role: "USER" | "STUDENT" | "TUTOR" | "ADMIN"
     }
     CompositeTypes: {
@@ -650,6 +841,9 @@ export const Constants = {
   public: {
     Enums: {
       application_status: ["PENDING", "UNDER_REVIEW", "APPROVED", "REJECTED"],
+      connection_status: ["PENDING_PAYMENT", "CONTACT_UNLOCKED", "CANCELLED"],
+      payment_status: ["PENDING", "SUCCESS", "FAILED"],
+      tutor_request_status: ["PENDING", "ACCEPTED", "DECLINED", "CANCELLED"],
       user_role: ["USER", "STUDENT", "TUTOR", "ADMIN"],
     },
   },

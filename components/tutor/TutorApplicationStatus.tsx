@@ -14,6 +14,8 @@ import {
   BookOpen,
   Calendar,
   ShieldCheck,
+  Inbox,
+  ArrowRight,
 } from "lucide-react";
 
 export interface SanitizedTutorApplication {
@@ -287,8 +289,28 @@ export function TutorApplicationStatus({
           </div>
         </div>
 
-        {/* Phase 4D CTA: Clearly designated Coming Soon badge */}
+        {/* Phase 5: Active Link to Tutor Requests Dashboard */}
         <div className="space-y-4">
+          <Link
+            href="/tutor/requests"
+            className="w-full inline-flex items-center justify-between p-4 rounded-2xl bg-teal/10 hover:bg-teal/15 border border-teal/20 text-navy transition-all shadow-sm group text-left"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-teal text-white flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+                <Inbox className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-navy">
+                  View Student Requests
+                </h3>
+                <p className="text-[11px] text-navy/70">
+                  Manage incoming student tuition requests and availability
+                </p>
+              </div>
+            </div>
+            <ArrowRight className="w-4 h-4 text-teal group-hover:translate-x-0.5 transition-transform" />
+          </Link>
+
           <div className="p-3.5 rounded-2xl bg-beige-light border border-navy/10 flex items-center justify-between text-xs text-navy/70">
             <span className="font-medium">Tutor Dashboard</span>
             <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-sky/50 text-navy border border-sky">
