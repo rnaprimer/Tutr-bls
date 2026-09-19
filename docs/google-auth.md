@@ -20,11 +20,10 @@ Tutr uses Google OAuth managed via Supabase Auth with server-side rendering (`@s
    - For local development:
      ```text
      http://localhost:3005
-     http://localhost:3000
      ```
    - For production / preview:
      ```text
-     https://your-production-domain.com
+     https://tutrbls.vercel.app
      ```
    > [!WARNING]
    > **Never use wildcard paths in Google Cloud Origins!**
@@ -52,8 +51,7 @@ Tutr uses Google OAuth managed via Supabase Auth with server-side rendering (`@s
    - **Redirect URLs** (Whitelisted in Supabase):
      ```text
      http://localhost:3005/**
-     http://localhost:3000/**
-     https://your-production-domain.com/**
+     https://tutrbls.vercel.app/**
      ```
 
 ---

@@ -12,18 +12,25 @@ export async function GET(request: NextRequest) {
   // Sanitize the destination URL to prevent open redirect vulnerabilities
   const destination = sanitizeNextUrl(next);
 
-  // Helper to build redirect URLs that respect proxies (e.g. Vercel)
+  // Helper to build redirect URLs that respect configured app URL, proxies (e.g. Vercel), or request origin
   const buildRedirectUrl = (path: string, params?: Record<string, string>) => {
-    const forwardedHost = request.headers.get("x-forwarded-host");
-    const isLocalEnv = process.env.NODE_ENV === "development";
-    let url: URL;
-    if (isLocalEnv) {
-      url = new URL(path, request.url);
-    } else if (forwardedHost) {
-      url = new URL(path, `https://${forwardedHost}`);
+    let baseUrl: string;
+    if (process.env.NEXT_PUBLIC_APP_URL) {
+      baseUrl = process.env.NEXT_PUBLIC_APP_URL.replace(/\/+$/, "");
+    } else if (process.env.NEXT_PUBLIC_SITE_URL) {
+      baseUrl = process.env.NEXT_PUBLIC_SITE_URL.replace(/\/+$/, "");
     } else {
-      url = new URL(path, request.url);
+      const forwardedHost = request.headers.get("x-forwarded-host");
+      if (forwardedHost && process.env.NODE_ENV !== "development") {
+        baseUrl = `https://${forwardedHost}`;
+      } else if (process.env.NEXT_PUBLIC_VERCEL_URL) {
+        baseUrl = `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`.replace(/\/+$/, "");
+      } else {
+        baseUrl = new URL(request.url).origin;
+      }
     }
+
+    const url = new URL(path, baseUrl);
     if (params) {
       Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
     }

@@ -9,6 +9,22 @@ interface GoogleSignInButtonProps {
   className?: string;
 }
 
+function getAppBaseUrl(): string {
+  if (process.env.NEXT_PUBLIC_APP_URL) {
+    return process.env.NEXT_PUBLIC_APP_URL.replace(/\/+$/, "");
+  }
+  if (process.env.NEXT_PUBLIC_SITE_URL) {
+    return process.env.NEXT_PUBLIC_SITE_URL.replace(/\/+$/, "");
+  }
+  if (typeof window !== "undefined" && window.location.origin) {
+    return window.location.origin;
+  }
+  if (process.env.NEXT_PUBLIC_VERCEL_URL) {
+    return `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`.replace(/\/+$/, "");
+  }
+  return "http://localhost:3005";
+}
+
 export function GoogleSignInButton({
   next = "/",
   className = "",
@@ -22,8 +38,8 @@ export function GoogleSignInButton({
       setErrorMessage(null);
 
       const supabase = createClient();
-      const origin = window.location.origin;
-      const callbackUrl = `${origin}/auth/callback?next=${encodeURIComponent(next)}`;
+      const baseUrl = getAppBaseUrl();
+      const callbackUrl = `${baseUrl}/auth/callback?next=${encodeURIComponent(next)}`;
 
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
