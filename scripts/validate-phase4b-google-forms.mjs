@@ -126,14 +126,14 @@ async function runValidation() {
     "Email Address": [sheetEmail],
     "Phone Number": ["+91 9437012345"],
     "Preferred Locality": ["Sahadevkhunta, Balasore"],
-    "Educational Qualification": ["M.A. English (Utkal University)"],
-    "Teaching Experience": ["8 years at Balasore Zilla School"],
+    "Educational Qualification": ["B.Tech"],
+    "Teaching Experience": ["5"],
     "Expected Fee": ["₹400/hour"],
     "Weekly Availability": ["Every evening 5-8 PM"],
     "Subjects Taught": ["English", "Odia"],
     "Target Classes": ["Class 8", "Class 9", "Class 10"],
     "Target Boards": ["BSE Odisha", "CBSE"],
-    "Documents": ["https://drive.google.com/file/d/sample1/view"],
+    "Upload Qualification/Identity Documents": ["https://drive.google.com/open?id=1AbCdEfGhIjKlMnOp"],
   };
 
   const sheetRes = await sendWebhook(sheetPayload);
@@ -153,8 +153,66 @@ async function runValidation() {
   assert(sheetAppInDb.full_name === "Rajesh Mohanty", "Unwrapped Full Name scalar from array");
   assert(sheetAppInDb.email === sheetEmail.toLowerCase(), "Unwrapped and normalized Email Address");
   assert(sheetAppInDb.location === "Sahadevkhunta, Balasore", "Mapped Preferred Locality");
+  assert(sheetAppInDb.qualification === "B.Tech", "Educational Qualification accurately mapped to text value 'B.Tech' (not URL)");
+  assert(sheetAppInDb.experience === "5", "Teaching Experience accurately mapped to '5'");
   assert(Array.isArray(sheetAppInDb.subjects) && sheetAppInDb.subjects.includes("English"), "Normalized Subjects array");
-  assert(Array.isArray(sheetAppInDb.documents) && sheetAppInDb.documents.length === 1, "Mapped Google Drive document link");
+  assert(
+    Array.isArray(sheetAppInDb.documents) &&
+    sheetAppInDb.documents.length === 1 &&
+    sheetAppInDb.documents[0] === "https://drive.google.com/open?id=1AbCdEfGhIjKlMnOp",
+    "Mapped 'Upload Qualification/Identity Documents' to documents array"
+  );
+
+  // 3b. Test submission with NO uploaded document
+  const noDocRespId = `resp_sheet_nodoc_${Date.now()}`;
+  const noDocEmail = `nodoc.tutor.${Date.now()}@example.com`;
+  const noDocPayload = {
+    "Response ID": [noDocRespId],
+    "Full Name": ["Pooja Sharma"],
+    "Email Address": [noDocEmail],
+    "Educational Qualification": ["M.Sc Mathematics"],
+    "Teaching Experience": ["3 years"],
+    "Upload Qualification/Identity Documents": [""],
+  };
+
+  const noDocRes = await sendWebhook(noDocPayload);
+  assert(noDocRes.statusCode === 201, "No-document payload accepted with HTTP 201");
+  const { data: noDocAppInDb } = await supabaseAdmin
+    .from("tutor_applications")
+    .select("*")
+    .eq("id", noDocRes.body.application_id)
+    .single();
+  assert(noDocAppInDb.qualification === "M.Sc Mathematics", "Educational Qualification preserved");
+  assert(noDocAppInDb.experience === "3 years", "Teaching Experience preserved");
+  assert(
+    Array.isArray(noDocAppInDb.documents) && noDocAppInDb.documents.length === 0,
+    "Submission with empty/no document yields clean empty documents array ([])"
+  );
+
+  // 3c. Test safeguard: accidental URL in qualification field is automatically rerouted
+  const urlInQualRespId = `resp_sheet_url_in_qual_${Date.now()}`;
+  const urlInQualEmail = `url.in.qual.${Date.now()}@example.com`;
+  const urlInQualPayload = {
+    "Response ID": [urlInQualRespId],
+    "Full Name": ["Amit Das"],
+    "Email Address": [urlInQualEmail],
+    "qualification": ["https://drive.google.com/open?id=accidental_url"],
+    "Teaching Experience": ["2"],
+  };
+
+  const urlInQualRes = await sendWebhook(urlInQualPayload);
+  assert(urlInQualRes.statusCode === 201, "Accidental URL in qualification handled with HTTP 201");
+  const { data: urlInQualAppInDb } = await supabaseAdmin
+    .from("tutor_applications")
+    .select("*")
+    .eq("id", urlInQualRes.body.application_id)
+    .single();
+  assert(urlInQualAppInDb.qualification === null, "Qualification with Drive URL was stripped from qualification column");
+  assert(
+    Array.isArray(urlInQualAppInDb.documents) &&
+    urlInQualAppInDb.documents.includes("https://drive.google.com/open?id=accidental_url"),
+    "Drive URL from qualification field was redirected to documents column"
+  );
 
   console.log("\n==================================================");
   console.log("TEST SUITE 3: Idempotency & Review Locking");
@@ -272,6 +330,8 @@ async function runValidation() {
   // Clean up test records
   await supabaseAdmin.from("tutor_applications").delete().in("id", [
     sheetAppId,
+    noDocRes.body.application_id,
+    urlInQualRes.body.application_id,
     existingRes.body.application_id,
     delayedAppId,
   ]);

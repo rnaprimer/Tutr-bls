@@ -179,7 +179,11 @@ function onFormSubmit(e) {
       var title = items[i].getItem().getTitle().toLowerCase().trim();
       var val = items[i].getResponse();
 
-      if (title.indexOf("name") !== -1) payload.full_name = String(val).trim();
+      // Check document / file upload fields first (e.g. "Upload Qualification/Identity Documents")
+      if (title.indexOf("document") !== -1 || title.indexOf("upload") !== -1 || title.indexOf("certificate") !== -1 || title.indexOf("cv") !== -1 || title.indexOf("resume") !== -1) {
+        payload.documents = extractArrayValues(val);
+      }
+      else if (title.indexOf("name") !== -1) payload.full_name = String(val).trim();
       else if (title.indexOf("email") !== -1 && !payload.email) payload.email = String(val).trim();
       else if (title.indexOf("phone") !== -1 || title.indexOf("whatsapp") !== -1) payload.phone = String(val).trim();
       else if (title.indexOf("locality") !== -1 || title.indexOf("location") !== -1 || title.indexOf("address") !== -1) payload.location = String(val).trim();
@@ -190,9 +194,6 @@ function onFormSubmit(e) {
       else if (title.indexOf("subject") !== -1) payload.subjects = extractArrayValues(val);
       else if (title.indexOf("class") !== -1) payload.classes = extractArrayValues(val);
       else if (title.indexOf("board") !== -1) payload.boards = extractArrayValues(val);
-      else if (title.indexOf("certificate") !== -1 || title.indexOf("cv") !== -1 || title.indexOf("document") !== -1 || title.indexOf("resume") !== -1) {
-        payload.documents = extractArrayValues(val);
-      }
     }
   }
   // Extract from Google Sheet event (e.namedValues)
@@ -203,7 +204,11 @@ function onFormSubmit(e) {
       var valArr = e.namedValues[header];
       var valStr = (valArr && valArr.length > 0) ? String(valArr[0]).trim() : "";
 
-      if (hLower.indexOf("name") !== -1) payload.full_name = valStr;
+      // Check document / file upload fields first (e.g. "Upload Qualification/Identity Documents")
+      if (hLower.indexOf("document") !== -1 || hLower.indexOf("upload") !== -1 || hLower.indexOf("certificate") !== -1 || hLower.indexOf("cv") !== -1 || hLower.indexOf("resume") !== -1) {
+        payload.documents = extractArrayValues(valArr);
+      }
+      else if (hLower.indexOf("name") !== -1) payload.full_name = valStr;
       else if (hLower.indexOf("email") !== -1 && !payload.email) payload.email = valStr;
       else if (hLower.indexOf("phone") !== -1 || hLower.indexOf("whatsapp") !== -1) payload.phone = valStr;
       else if (hLower.indexOf("locality") !== -1 || hLower.indexOf("location") !== -1 || hLower.indexOf("address") !== -1) payload.location = valStr;
@@ -214,10 +219,15 @@ function onFormSubmit(e) {
       else if (hLower.indexOf("subject") !== -1) payload.subjects = extractArrayValues(valArr);
       else if (hLower.indexOf("class") !== -1) payload.classes = extractArrayValues(valArr);
       else if (hLower.indexOf("board") !== -1) payload.boards = extractArrayValues(valArr);
-      else if (hLower.indexOf("certificate") !== -1 || hLower.indexOf("cv") !== -1 || hLower.indexOf("document") !== -1 || hLower.indexOf("resume") !== -1) {
-        payload.documents = extractArrayValues(valArr);
-      }
     }
+  }
+
+  // Guard: If qualification is accidentally a Drive/HTTP URL, move it to documents
+  if (payload.qualification && (payload.qualification.indexOf("http://") === 0 || payload.qualification.indexOf("https://") === 0 || payload.qualification.indexOf("drive.google.com") !== -1)) {
+    if (payload.documents.indexOf(payload.qualification) === -1) {
+      payload.documents.push(payload.qualification);
+    }
+    payload.qualification = "";
   }
 
   // Pre-transmission sanity check

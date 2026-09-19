@@ -160,6 +160,44 @@ export async function POST(request: NextRequest) {
   }
   const normalizedEmail = rawEmail.toLowerCase();
 
+  // Helper: check if a string represents a file URL or Google Drive link
+  const isDocumentUrl = (val: string): boolean => {
+    const trimmed = val.trim().toLowerCase();
+    return (
+      trimmed.startsWith("http://") ||
+      trimmed.startsWith("https://") ||
+      trimmed.includes("drive.google.com") ||
+      trimmed.includes("docs.google.com")
+    );
+  };
+
+  // Helper: extracts document URLs from multiple possible formats (string, array, comma/newline separated)
+  const extractDocumentUrls = (raw: unknown): string[] => {
+    if (!raw) return [];
+    const candidates: string[] = [];
+    if (Array.isArray(raw)) {
+      for (const item of raw) {
+        if (typeof item === "string") {
+          // URLs might be separated by commas, newlines, or spaces
+          const parts = item.split(/[\n,\s]+/).map((s) => s.trim()).filter(Boolean);
+          candidates.push(...parts);
+        }
+      }
+    } else if (typeof raw === "string") {
+      const parts = raw.split(/[\n,\s]+/).map((s) => s.trim()).filter(Boolean);
+      candidates.push(...parts);
+    }
+
+    // Filter valid URLs and deduplicate
+    const validUrls = Array.from(
+      new Set(
+        candidates.filter((url) => isDocumentUrl(url))
+      )
+    ).slice(0, 20); // reasonable upper bound
+
+    return validUrls;
+  };
+
   // Optional string fields with length limits (supports array-wrapped values from Google Sheets)
   const phone = (
     extractString(payload.phone) ||
@@ -174,17 +212,63 @@ export async function POST(request: NextRequest) {
     extractString(payload["Address"])
   )?.slice(0, 500);
 
-  const qualification = (
-    extractString(payload.qualification) ||
-    extractString(payload["Educational Qualification"]) ||
-    extractString(payload["Qualification"])
-  )?.slice(0, 500);
-
+  // Teaching Experience
   const experience = (
     extractString(payload.experience) ||
     extractString(payload["Teaching Experience"]) ||
     extractString(payload["Experience"])
   )?.slice(0, 1000);
+
+  // Scan all payload keys for potential document upload questions
+  // Google Forms question: "Upload Qualification/Identity Documents"
+  let rawDocumentInput: unknown =
+    payload.documents ||
+    payload["Upload Qualification/Identity Documents"] ||
+    payload["Upload Qualification / Identity Documents"] ||
+    payload["Upload Qualification/Identity Document"] ||
+    payload["Qualification/Identity Documents"] ||
+    payload["Identity Documents"] ||
+    payload["Documents"] ||
+    payload["Certificates"] ||
+    payload["Resume"];
+
+  if (!rawDocumentInput) {
+    for (const key of Object.keys(payload)) {
+      const lowerKey = key.toLowerCase().trim();
+      if (
+        (lowerKey.includes("upload") && lowerKey.includes("document")) ||
+        (lowerKey.includes("identity") && lowerKey.includes("document")) ||
+        lowerKey.includes("certificate") ||
+        lowerKey.includes("resume") ||
+        lowerKey.includes("cv")
+      ) {
+        rawDocumentInput = payload[key];
+        break;
+      }
+    }
+  }
+
+  const extractedDocs = extractDocumentUrls(rawDocumentInput);
+
+  // Educational Qualification:
+  // Must NOT contain URLs. If payload.qualification contains a URL (due to buggy upstream Apps Script),
+  // route that URL to documents and discard it from qualification.
+  let rawQual =
+    extractString(payload["Educational Qualification"]) ||
+    extractString(payload["Qualification"]) ||
+    extractString(payload.qualification);
+
+  if (rawQual && isDocumentUrl(rawQual)) {
+    console.warn(
+      `[Webhook Field Guard] Document URL detected in qualification field: "${rawQual}". Redirecting to documents.`
+    );
+    if (!extractedDocs.includes(rawQual)) {
+      extractedDocs.push(rawQual);
+    }
+    rawQual = null;
+  }
+
+  const qualification = rawQual?.slice(0, 500) || null;
 
   const fee = (
     extractString(payload.fee) ||
@@ -202,7 +286,7 @@ export async function POST(request: NextRequest) {
   const subjects = normalizeArray(payload.subjects || payload["Subjects Taught"] || payload["Subjects"]);
   const classes = normalizeArray(payload.classes || payload["Target Classes"] || payload["Classes"]);
   const boards = normalizeArray(payload.boards || payload["Target Boards"] || payload["Boards"]);
-  const documents = normalizeArray(payload.documents || payload["Documents"] || payload["Certificates"] || payload["Resume"]);
+  const documents = extractedDocs;
 
   // Note: Caller-provided review fields ('status', 'reviewed_at', 'reviewed_by', 'rejection_reason', 'is_verified')
   // are completely ignored and stripped from processing to protect review integrity.
