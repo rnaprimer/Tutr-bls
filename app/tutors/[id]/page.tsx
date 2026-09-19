@@ -73,13 +73,11 @@ export default async function TutorProfilePage({ params }: PageProps) {
     notFound();
   }
 
-  // 2. Fetch associated subjects, classes, boards
+  // 2. Fetch associated subjects, classes, boards strictly for this tutor
   const [
     { data: tutorSubjects },
     { data: tutorClasses },
     { data: tutorBoards },
-    { data: allSubjects },
-    { data: allClasses },
   ] = await Promise.all([
     supabase
       .from("tutor_subjects")
@@ -93,29 +91,22 @@ export default async function TutorProfilePage({ params }: PageProps) {
       .from("tutor_boards")
       .select("board:boards(id, name, slug)")
       .eq("tutor_id", id),
-    supabase.from("subjects").select("id, name").order("name"),
-    supabase.from("classes").select("id, name, sort_order").order("sort_order"),
   ]);
 
-  // Extract option items
-  const subjectsList: OptionItem[] =
-    tutorSubjects && tutorSubjects.length > 0
-      ? (tutorSubjects
-          .map((ts) => ts.subject)
-          .filter(Boolean) as OptionItem[])
-      : (allSubjects || []);
+  // Extract option items strictly belonging to this tutor
+  const subjectsList: OptionItem[] = (tutorSubjects || [])
+    .map((ts) => ts.subject)
+    .filter((s): s is NonNullable<typeof s> => Boolean(s))
+    .map((s) => ({ id: s.id, name: s.name }));
 
-  const classesList: OptionItem[] =
-    tutorClasses && tutorClasses.length > 0
-      ? (tutorClasses
-          .map((tc) => tc.class)
-          .filter(Boolean) as OptionItem[])
-      : (allClasses || []);
+  const classesList: OptionItem[] = (tutorClasses || [])
+    .map((tc) => tc.class)
+    .filter((c): c is NonNullable<typeof c> => Boolean(c))
+    .map((c) => ({ id: c.id, name: c.name }));
 
-  const boardsList =
-    tutorBoards
-      ?.map((tb) => tb.board?.name)
-      .filter(Boolean) || [];
+  const boardsList: string[] = (tutorBoards || [])
+    .map((tb) => tb.board?.name)
+    .filter((name): name is string => typeof name === "string" && name.length > 0);
 
   // 3. User session check
   const {
@@ -217,7 +208,7 @@ export default async function TutorProfilePage({ params }: PageProps) {
                       </span>
                     ))
                   ) : (
-                    <span className="text-xs text-navy/50">All Balasore subjects</span>
+                    <span className="text-xs text-navy/50">Not specified</span>
                   )}
                 </div>
               </div>
@@ -238,7 +229,7 @@ export default async function TutorProfilePage({ params }: PageProps) {
                       </span>
                     ))
                   ) : (
-                    <span className="text-xs text-navy/50">Classes 1 - 12</span>
+                    <span className="text-xs text-navy/50">Not specified</span>
                   )}
                 </div>
               </div>
@@ -259,7 +250,7 @@ export default async function TutorProfilePage({ params }: PageProps) {
                       </span>
                     ))
                   ) : (
-                    <span className="text-xs text-navy/50">BSE, CBSE, ICSE</span>
+                    <span className="text-xs text-navy/50">Not specified</span>
                   )}
                 </div>
               </div>

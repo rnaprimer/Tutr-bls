@@ -601,6 +601,8 @@ export type Database = {
         Row: {
           availability: string | null
           bio: string | null
+          boards: Json | null
+          classes: Json | null
           created_at: string | null
           display_name: string | null
           experience: string | null
@@ -610,11 +612,14 @@ export type Database = {
           locality: string | null
           photo_url: string | null
           qualification: string | null
+          subjects: Json | null
           teaching_areas: string | null
         }
         Insert: {
           availability?: string | null
           bio?: string | null
+          boards?: never
+          classes?: never
           created_at?: string | null
           display_name?: string | null
           experience?: string | null
@@ -624,11 +629,14 @@ export type Database = {
           locality?: string | null
           photo_url?: string | null
           qualification?: string | null
+          subjects?: never
           teaching_areas?: string | null
         }
         Update: {
           availability?: string | null
           bio?: string | null
+          boards?: never
+          classes?: never
           created_at?: string | null
           display_name?: string | null
           experience?: string | null
@@ -638,15 +646,17 @@ export type Database = {
           locality?: string | null
           photo_url?: string | null
           qualification?: string | null
+          subjects?: never
           teaching_areas?: string | null
         }
         Relationships: []
       }
     }
     Functions: {
-      accept_tutor_request:
-        | { Args: { p_request_id: string }; Returns: Json }
-        | { Args: { p_amount?: number; p_request_id: string }; Returns: Json }
+      accept_tutor_request: {
+        Args: { p_amount?: number; p_request_id: string }
+        Returns: Json
+      }
       approve_tutor_application: {
         Args: { p_application_id: string }
         Returns: Json
