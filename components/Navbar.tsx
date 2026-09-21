@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Menu, X, BookOpen, GraduationCap, MapPin } from "lucide-react";
 import { Button } from "./Button";
+import { TutrLogoBook, DoodleCurvedArrow } from "./TutrIllustrations";
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -29,72 +30,80 @@ export function Navbar() {
   }, [mobileMenuOpen]);
 
   const navLinks = [
-    { label: "Find Tutors", href: "/tutors" },
+    { label: "Home", href: "/" },
     { label: "About", href: "/#about" },
     { label: "How it works", href: "/#how-it-works" },
-    { label: "Contact", href: "/#contact" },
+    { label: "Find Tutors", href: "/tutors" },
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md border-b border-navy/10 transition-colors">
+    <header className="sticky top-0 z-50 w-full bg-canvas-lavender/95 backdrop-blur-md border-b-2 border-ink transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-20">
-          {/* Logo */}
+          {/* Logo & Balasore pill */}
           <div className="flex items-center gap-3">
             <Link
               href="/"
-              className="flex items-center gap-2 text-2xl font-bold tracking-tight text-navy hover:opacity-90 transition-opacity"
+              className="flex items-center gap-2 group focus-visible:outline-none"
               aria-label="Tutr Home"
             >
-              <span>Tutr</span>
-              <span className="inline-flex items-center gap-1 text-[11px] font-medium tracking-wide uppercase px-2 py-0.5 rounded-full bg-sky/50 text-navy-dark border border-sky">
-                <MapPin className="w-3 h-3 text-teal" />
+              <span className="text-2xl sm:text-3xl font-extrabold tracking-tight text-ink font-sans">
+                Tutr
+              </span>
+              <TutrLogoBook className="w-8 h-8 transition-transform group-hover:rotate-6" />
+              <span className="hidden sm:inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-white text-ink border-2 border-ink shadow-[1.5px_1.5px_0px_#18121E]">
+                <MapPin className="w-3 h-3 text-coral" />
                 Balasore
               </span>
             </Link>
           </div>
 
-          {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center gap-8" aria-label="Main Navigation">
+          {/* Center Navigation Links */}
+          <nav className="hidden md:flex items-center gap-7 font-sans" aria-label="Main Navigation">
             {navLinks.map((link) => (
               <Link
                 key={link.label}
                 href={link.href}
-                className="text-sm font-medium text-navy/80 hover:text-navy transition-colors py-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal rounded"
+                className="text-sm font-bold text-ink hover:text-coral transition-colors py-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink rounded"
               >
                 {link.label}
               </Link>
             ))}
           </nav>
 
-          {/* Desktop Right CTAs */}
-          <div className="hidden sm:flex items-center gap-3">
-            <Button
-              href="/login?next=/student"
-              variant="outline"
-              size="sm"
-              icon={<BookOpen className="w-4 h-4 text-teal" />}
-              ariaLabel="Navigate to Student Portal"
-            >
-              I am a Student
-            </Button>
+          {/* Desktop Right CTAs with playful doodle arrow */}
+          <div className="hidden sm:flex items-center gap-3 relative">
+            {/* Little curved doodle arrow pointing to Tutor button */}
+            <div className="absolute -left-10 -top-4 pointer-events-none hidden lg:block">
+              <DoodleCurvedArrow className="w-9 h-9 text-ink" />
+            </div>
+
             <Button
               href="/login?next=/tutor"
-              variant="primary"
+              variant="tutor"
               size="sm"
-              icon={<GraduationCap className="w-4 h-4 text-sky" />}
+              icon={<GraduationCap className="w-4 h-4 text-ink" />}
               ariaLabel="Navigate to Tutor Portal"
             >
-              I am a Tutor
+              Join as a Tutor
+            </Button>
+            <Button
+              href="/login?next=/student"
+              variant="student"
+              size="sm"
+              icon={<BookOpen className="w-4 h-4 text-ink" />}
+              ariaLabel="Navigate to Student Portal"
+            >
+              Find a Tutor
             </Button>
           </div>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile Menu Toggle Button */}
           <div className="flex sm:hidden">
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-lg text-navy hover:bg-beige/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-teal"
+              className="inline-flex items-center justify-center p-2 rounded-xl text-ink bg-white border-2 border-ink shadow-[2px_2px_0px_#18121E] hover:bg-canvas-subtle focus:outline-none cursor-pointer"
               aria-controls="mobile-menu"
               aria-expanded={mobileMenuOpen}
               aria-label={mobileMenuOpen ? "Close main menu" : "Open main menu"}
@@ -109,12 +118,12 @@ export function Navbar() {
       {mobileMenuOpen && (
         <div
           id="mobile-menu"
-          className="sm:hidden fixed inset-x-0 top-[64px] bottom-0 bg-white/98 backdrop-blur-lg border-b border-navy/10 px-6 py-6 overflow-y-auto flex flex-col justify-between shadow-xl animate-in fade-in slide-in-from-top-2 duration-200"
+          className="sm:hidden fixed inset-x-0 top-[64px] bottom-0 bg-canvas-lavender border-b-2 border-ink px-6 py-6 overflow-y-auto flex flex-col justify-between shadow-2xl animate-in fade-in slide-in-from-top-2 duration-200"
         >
           <div className="flex flex-col gap-4">
-            <div className="flex items-center gap-2 pb-3 border-b border-navy/10">
-              <span className="text-xs font-semibold uppercase tracking-wider text-teal">
-                Hyperlocal Tutoring in Balasore
+            <div className="flex items-center gap-2 pb-3 border-b-2 border-ink/20">
+              <span className="tutr-badge px-3 py-1 bg-white text-xs font-bold text-ink">
+                📍 Hyperlocal Tutoring in Balasore
               </span>
             </div>
 
@@ -124,7 +133,7 @@ export function Navbar() {
                   key={link.label}
                   href={link.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="py-3 px-3 text-base font-medium text-navy hover:bg-beige rounded-xl transition-colors"
+                  className="py-3 px-4 text-base font-bold text-ink bg-white border-2 border-ink rounded-2xl shadow-[2px_2px_0px_#18121E] hover:bg-honey-light transition-all"
                 >
                   {link.label}
                 </Link>
@@ -133,26 +142,26 @@ export function Navbar() {
           </div>
 
           {/* Mobile Dual Action Buttons */}
-          <div className="pt-6 border-t border-navy/10 flex flex-col gap-3 pb-8">
-            <p className="text-xs text-navy/60 font-medium text-center mb-1">
-              Choose your role to get started
+          <div className="pt-6 border-t-2 border-ink/20 flex flex-col gap-3 pb-8">
+            <p className="text-xs text-ink-muted font-bold text-center mb-1">
+              Choose your role to get started:
             </p>
             <Button
               href="/login?next=/student"
-              variant="outline"
+              variant="student"
               size="lg"
               className="w-full justify-center"
-              icon={<BookOpen className="w-5 h-5 text-teal" />}
+              icon={<BookOpen className="w-5 h-5 text-ink" />}
               onClick={() => setMobileMenuOpen(false)}
             >
               I am a Student
             </Button>
             <Button
               href="/login?next=/tutor"
-              variant="primary"
+              variant="tutor"
               size="lg"
               className="w-full justify-center"
-              icon={<GraduationCap className="w-5 h-5 text-sky" />}
+              icon={<GraduationCap className="w-5 h-5 text-ink" />}
               onClick={() => setMobileMenuOpen(false)}
             >
               I am a Tutor

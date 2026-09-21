@@ -55,7 +55,7 @@ export function TutorRequestActions({
         <button
           onClick={handleDecline}
           disabled={loading !== null}
-          className="inline-flex items-center gap-1 px-3.5 py-1.5 rounded-full border border-rose-200 bg-rose-50 text-rose-800 text-xs font-semibold hover:bg-rose-100 disabled:opacity-50 transition-colors"
+          className="inline-flex items-center gap-1 px-3.5 py-1.5 rounded-full border-2 border-ink bg-rose-50 text-rose-900 text-xs font-bold hover:bg-rose-100 disabled:opacity-50 transition-colors shadow-[1px_1px_0px_#18121E]"
           title={`Decline request from ${studentName}`}
         >
           {loading === "decline" ? (
@@ -71,7 +71,7 @@ export function TutorRequestActions({
         <button
           onClick={handleAccept}
           disabled={loading !== null}
-          className="inline-flex items-center gap-1 px-4 py-1.5 rounded-full bg-emerald-600 text-white text-xs font-semibold hover:bg-emerald-700 disabled:opacity-50 transition-all shadow-sm"
+          className="inline-flex items-center gap-1 px-4 py-1.5 rounded-full border-2 border-ink bg-mint-badge text-ink text-xs font-bold hover:bg-mint-badge/80 disabled:opacity-50 transition-all shadow-[2px_2px_0px_#18121E]"
           title={`Accept request from ${studentName}`}
         >
           {loading === "accept" ? (
@@ -86,7 +86,7 @@ export function TutorRequestActions({
       </div>
 
       {error && (
-        <p className="text-[10px] text-rose-600 flex items-center gap-1 mt-0.5">
+        <p className="text-[10px] text-rose-600 font-bold flex items-center gap-1 mt-0.5">
           <AlertCircle className="w-3 h-3" />
           <span>{error}</span>
         </p>

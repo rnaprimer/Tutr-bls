@@ -131,7 +131,7 @@ export function TutorOnboardingPaymentCard({
           },
         },
         theme: {
-          color: "#0d2b45", // Tutr Navy
+          color: "#18121E",
         },
       };
 
@@ -157,12 +157,12 @@ export function TutorOnboardingPaymentCard({
   // ----------------------------------------------------
   if (status === "PROCESSING") {
     return (
-      <div className="w-full bg-white rounded-3xl border border-sky/30 p-6 sm:p-8 text-center shadow-sm">
-        <div className="w-14 h-14 rounded-2xl bg-sky/30 flex items-center justify-center text-teal mx-auto mb-4">
-          <Loader2 className="w-7 h-7 animate-spin" />
+      <div className="w-full tutr-card bg-white p-6 sm:p-8 text-center">
+        <div className="w-14 h-14 rounded-2xl bg-purple-accent/20 border-2 border-ink flex items-center justify-center text-ink mx-auto mb-4 shadow-[2px_2px_0px_#18121E]">
+          <Loader2 className="w-7 h-7 animate-spin text-warm-coral" />
         </div>
-        <h2 className="text-xl font-bold text-navy mb-1">Payment processing...</h2>
-        <p className="text-xs text-navy/70 max-w-sm mx-auto leading-relaxed">
+        <h2 className="text-xl font-black text-ink mb-1">Payment processing...</h2>
+        <p className="text-xs text-ink/70 font-medium max-w-sm mx-auto leading-relaxed">
           Please wait while we verify your payment.
         </p>
       </div>
@@ -174,47 +174,47 @@ export function TutorOnboardingPaymentCard({
   // ----------------------------------------------------
   if (status === "PAID") {
     return (
-      <div className="w-full bg-white rounded-3xl border border-emerald-200 p-6 sm:p-8 text-center shadow-sm">
-        <div className="w-14 h-14 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 mx-auto mb-4">
-          <CheckCircle className="w-7 h-7" />
+      <div className="w-full tutr-card bg-white p-6 sm:p-8 text-center">
+        <div className="w-14 h-14 rounded-2xl bg-mint-badge/30 border-2 border-ink flex items-center justify-center text-ink mx-auto mb-4 shadow-[2px_2px_0px_#18121E]">
+          <CheckCircle className="w-7 h-7 text-emerald-800" />
         </div>
 
-        <div className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-emerald-800 bg-emerald-100 border border-emerald-200 px-3 py-0.5 rounded-full mb-3">
-          <CheckCircle className="w-3.5 h-3.5" />
+        <div className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-ink bg-mint-badge/40 border-2 border-ink px-3 py-0.5 rounded-full mb-3 shadow-[1px_1px_0px_#18121E]">
+          <CheckCircle className="w-3.5 h-3.5 text-emerald-800" />
           Onboarding Complete
         </div>
 
-        <h2 className="text-xl font-bold text-navy mb-2">✓ Onboarding Complete</h2>
+        <h2 className="text-xl font-black text-ink mb-2">✓ Onboarding Complete</h2>
 
-        <p className="text-xs text-navy/70 mb-6 leading-relaxed max-w-md mx-auto">
-          Your payment of <strong>₹{feeInr}</strong> has been verified. Your tutor profile is now active and available to students across Balasore.
+        <p className="text-xs text-ink/70 font-medium mb-6 leading-relaxed max-w-md mx-auto">
+          Your payment of <strong className="text-ink">₹{feeInr}</strong> has been verified. Your tutor profile is now active and available to students across Balasore.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
           {tutorProfileId ? (
             <Link
               href={`/tutors/${tutorProfileId}`}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-navy hover:bg-navy-dark text-white text-xs font-semibold shadow-sm transition-all"
+              className="w-full sm:w-auto tutr-btn-tutor py-2.5 px-6 text-xs inline-flex items-center gap-2"
             >
               <span>View Public Profile</span>
-              <ExternalLink className="w-3.5 h-3.5 text-teal" />
+              <ExternalLink className="w-3.5 h-3.5" />
             </Link>
           ) : (
             <Link
               href="/tutors"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-navy hover:bg-navy-dark text-white text-xs font-semibold shadow-sm transition-all"
+              className="w-full sm:w-auto tutr-btn-tutor py-2.5 px-6 text-xs inline-flex items-center gap-2"
             >
               <span>View Public Marketplace</span>
-              <ExternalLink className="w-3.5 h-3.5 text-teal" />
+              <ExternalLink className="w-3.5 h-3.5" />
             </Link>
           )}
 
           <Link
             href="/tutor/requests"
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full border border-navy/20 hover:bg-beige/60 text-navy font-semibold text-xs transition-colors"
+            className="w-full sm:w-auto px-6 py-2.5 rounded-full border-2 border-ink bg-white font-bold text-ink text-xs hover:bg-gray-50 transition-colors shadow-[2px_2px_0px_#18121E] inline-flex items-center justify-center gap-2"
           >
             <span>Go to Student Requests</span>
-            <ArrowRight className="w-3.5 h-3.5 text-teal" />
+            <ArrowRight className="w-3.5 h-3.5 text-warm-coral" />
           </Link>
         </div>
       </div>
@@ -226,23 +226,23 @@ export function TutorOnboardingPaymentCard({
   // ----------------------------------------------------
   if (status === "FAILED") {
     return (
-      <div className="w-full bg-white rounded-3xl border border-rose-200 p-6 sm:p-8 text-center shadow-sm">
-        <div className="w-14 h-14 rounded-2xl bg-rose-50 border border-rose-200 flex items-center justify-center text-rose-600 mx-auto mb-4">
-          <AlertCircle className="w-7 h-7" />
+      <div className="w-full tutr-card bg-white p-6 sm:p-8 text-center">
+        <div className="w-14 h-14 rounded-2xl bg-rose-50 border-2 border-ink flex items-center justify-center text-ink mx-auto mb-4 shadow-[2px_2px_0px_#18121E]">
+          <AlertCircle className="w-7 h-7 text-rose-600" />
         </div>
 
-        <div className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-rose-800 bg-rose-100 border border-rose-200 px-3 py-0.5 rounded-full mb-3">
+        <div className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-ink bg-rose-100 border-2 border-ink px-3 py-0.5 rounded-full mb-3 shadow-[1px_1px_0px_#18121E]">
           Payment Pending
         </div>
 
-        <h2 className="text-xl font-bold text-navy mb-2">Payment not completed</h2>
+        <h2 className="text-xl font-black text-ink mb-2">Payment not completed</h2>
 
-        <p className="text-xs text-navy/70 mb-4 leading-relaxed max-w-md mx-auto">
+        <p className="text-xs text-ink/70 font-medium mb-4 leading-relaxed max-w-md mx-auto">
           Your application is approved, but your onboarding payment is still pending.
         </p>
 
         {error && (
-          <div className="max-w-md mx-auto mb-6 p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-800 text-left">
+          <div className="max-w-md mx-auto mb-6 p-3 rounded-xl bg-rose-50 border-2 border-rose-300 text-xs text-rose-900 font-medium text-left">
             {error}
           </div>
         )}
@@ -250,16 +250,16 @@ export function TutorOnboardingPaymentCard({
         <button
           onClick={handleStartPayment}
           disabled={loading}
-          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3 rounded-full bg-navy hover:bg-navy-dark text-white text-xs font-bold shadow-sm transition-all disabled:opacity-50"
+          className="w-full sm:w-auto tutr-btn-tutor py-3 px-8 text-xs inline-flex items-center justify-center gap-2 disabled:opacity-50"
         >
           {loading ? (
             <>
-              <Loader2 className="w-4 h-4 animate-spin text-teal" />
+              <Loader2 className="w-4 h-4 animate-spin" />
               <span>Opening Checkout...</span>
             </>
           ) : (
             <>
-              <RefreshCw className="w-4 h-4 text-teal" />
+              <RefreshCw className="w-4 h-4" />
               <span>Try Again — ₹{feeInr}</span>
             </>
           )}
@@ -272,31 +272,31 @@ export function TutorOnboardingPaymentCard({
   // STATE: APPROVED + UNPAID (DEFAULT)
   // ----------------------------------------------------
   return (
-    <div className="w-full bg-white rounded-3xl border border-sky/40 p-6 sm:p-8 text-center shadow-sm">
-      <div className="w-14 h-14 rounded-2xl bg-sky/30 border border-sky flex items-center justify-center text-teal-dark mx-auto mb-4">
-        <Sparkles className="w-7 h-7" />
+    <div className="w-full tutr-card bg-white p-6 sm:p-8 text-center">
+      <div className="w-14 h-14 rounded-2xl bg-honey/20 border-2 border-ink flex items-center justify-center text-ink mx-auto mb-4 shadow-[2px_2px_0px_#18121E]">
+        <Sparkles className="w-7 h-7 text-warm-coral" />
       </div>
 
-      <div className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-teal-dark bg-sky/30 border border-sky/50 px-3 py-0.5 rounded-full mb-3">
+      <div className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-ink bg-honey/30 border-2 border-ink px-3 py-0.5 rounded-full mb-3 shadow-[1px_1px_0px_#18121E]">
         🎉 Application Approved
       </div>
 
-      <h2 className="text-xl sm:text-2xl font-extrabold text-navy mb-2 tracking-tight">
+      <h2 className="text-xl sm:text-2xl font-black text-ink mb-2 tracking-tight">
         🎉 Your application is approved!
       </h2>
 
-      <p className="text-xs text-navy/70 mb-6 max-w-md mx-auto leading-relaxed">
+      <p className="text-xs text-ink/70 font-medium mb-6 max-w-md mx-auto leading-relaxed">
         Your tutor application has been verified and approved. Complete your onboarding by paying the one-time onboarding fee to activate your tutor profile and become visible to students.
       </p>
 
       {/* Fee Display Banner */}
-      <div className="max-w-xs mx-auto mb-6 p-4 rounded-2xl bg-beige-light/70 border border-navy/10 flex items-center justify-between">
-        <span className="text-xs font-medium text-navy/70">One-Time Onboarding Fee</span>
-        <span className="text-xl font-extrabold text-navy">₹{feeInr}</span>
+      <div className="max-w-xs mx-auto mb-6 p-4 rounded-2xl bg-canvas-lavender border-2 border-ink flex items-center justify-between shadow-[2px_2px_0px_#18121E]">
+        <span className="text-xs font-bold text-ink/70">One-Time Onboarding Fee</span>
+        <span className="text-xl font-black text-ink">₹{feeInr}</span>
       </div>
 
       {error && (
-        <div className="max-w-md mx-auto mb-4 p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-800 text-left">
+        <div className="max-w-md mx-auto mb-4 p-3 rounded-xl bg-rose-50 border-2 border-rose-300 text-xs text-rose-900 font-medium text-left">
           {error}
         </div>
       )}
@@ -304,22 +304,22 @@ export function TutorOnboardingPaymentCard({
       <button
         onClick={handleStartPayment}
         disabled={loading}
-        className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-navy hover:bg-navy-dark text-white text-xs font-bold tracking-wide shadow-sm hover:shadow transition-all disabled:opacity-50"
+        className="w-full sm:w-auto tutr-btn-tutor py-3.5 px-8 text-xs inline-flex items-center justify-center gap-2 tracking-wide disabled:opacity-50"
       >
         {loading ? (
           <>
-            <Loader2 className="w-4 h-4 animate-spin text-teal" />
+            <Loader2 className="w-4 h-4 animate-spin" />
             <span>Connecting to Gateway...</span>
           </>
         ) : (
           <>
             <span>Complete Onboarding — ₹{feeInr}</span>
-            <ArrowRight className="w-4 h-4 text-teal" />
+            <ArrowRight className="w-4 h-4" />
           </>
         )}
       </button>
 
-      <p className="text-[10px] text-navy/50 mt-3">
+      <p className="text-[10px] text-ink/50 font-bold mt-3">
         Secure payments powered by Razorpay • Instant profile activation
       </p>
     </div>

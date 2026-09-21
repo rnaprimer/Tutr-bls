@@ -1,31 +1,140 @@
 @import "tailwindcss";
 
 @theme {
-  --color-navy: #2F4156;
-  --color-navy-dark: #202d3c;
-  --color-navy-light: #3e5570;
+  --color-canvas-lavender: #EDE8F8;
+  --color-canvas-white: #FFFFFF;
+  --color-canvas-cream: #FAF7F2;
+  --color-canvas-subtle: #F6F3FC;
   
-  --color-teal: #567C8D;
-  --color-teal-dark: #446371;
-  --color-teal-light: #6e94a6;
+  --color-ink: #18121E;
+  --color-ink-muted: #5A5364;
+  --color-ink-light: #8E8699;
   
-  --color-sky: #C8D9E6;
-  --color-sky-light: #eef4f8;
-  --color-sky-dark: #b1c8d9;
+  --color-coral: #F28F85;
+  --color-coral-light: #FCECE9;
+  --color-coral-dark: #E27469;
   
-  --color-beige: #F5EFEB;
-  --color-beige-dark: #e8dfd8;
-  --color-beige-light: #faf7f5;
+  --color-purple-accent: #CBB7F0;
+  --color-purple-light: #F3EEFC;
+  --color-purple-dark: #9E7CE2;
+  
+  --color-honey: #F6BD75;
+  --color-honey-light: #FDF4E6;
+  --color-honey-dark: #DE9C45;
+  
+  --color-mint: #68CEAA;
+  --color-mint-light: #E6F8F1;
+  --color-mint-dark: #3BA880;
+
+  /* Backward compatible aliases for navy/teal/sky */
+  --color-navy: #18121E;
+  --color-navy-dark: #100B15;
+  --color-navy-light: #3D3547;
+  --color-teal: #9E7CE2;
+  --color-teal-dark: #7A56C4;
+  --color-teal-light: #CBB7F0;
+  --color-sky: #CBB7F0;
+  --color-sky-light: #F3EEFC;
+  --color-sky-dark: #B59DE0;
+  --color-beige: #EDE8F8;
+  --color-beige-dark: #DDD4EF;
+  --color-beige-light: #F6F3FC;
 }
 
 :root {
-  --background: #FFFFFF;
-  --foreground: #2F4156;
+  --background: #EDE8F8;
+  --foreground: #18121E;
 }
 
 body {
   background-color: var(--background);
   color: var(--foreground);
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+/* Tactile Neo-Brutalist & Hand-Drawn utility classes */
+.tutr-card {
+  background-color: #FFFFFF;
+  border: 2px solid #18121E;
+  border-radius: 1.5rem;
+  box-shadow: 3px 3px 0px #18121E;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.tutr-card-hover:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0px #18121E;
+}
+
+.tutr-card-active:active {
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0px #18121E;
+}
+
+.tutr-btn-student {
+  background-color: #F6BD75;
+  color: #18121E;
+  border: 2px solid #18121E;
+  border-radius: 9999px;
+  box-shadow: 2.5px 2.5px 0px #18121E;
+  font-weight: 700;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+.tutr-btn-student:hover {
+  background-color: #F4B35F;
+  transform: translate(-1.5px, -1.5px);
+  box-shadow: 4px 4px 0px #18121E;
+}
+.tutr-btn-student:active {
+  transform: translate(1px, 1px);
+  box-shadow: 1.5px 1.5px 0px #18121E;
+}
+
+.tutr-btn-tutor {
+  background-color: #CBB7F0;
+  color: #18121E;
+  border: 2px solid #18121E;
+  border-radius: 9999px;
+  box-shadow: 2.5px 2.5px 0px #18121E;
+  font-weight: 700;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+.tutr-btn-tutor:hover {
+  background-color: #BA9EE8;
+  transform: translate(-1.5px, -1.5px);
+  box-shadow: 4px 4px 0px #18121E;
+}
+.tutr-btn-tutor:active {
+  transform: translate(1px, 1px);
+  box-shadow: 1.5px 1.5px 0px #18121E;
+}
+
+.tutr-btn-coral {
+  background-color: #F28F85;
+  color: #18121E;
+  border: 2px solid #18121E;
+  border-radius: 9999px;
+  box-shadow: 2.5px 2.5px 0px #18121E;
+  font-weight: 700;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+.tutr-btn-coral:hover {
+  background-color: #E67A6E;
+  transform: translate(-1.5px, -1.5px);
+  box-shadow: 4px 4px 0px #18121E;
+}
+.tutr-btn-coral:active {
+  transform: translate(1px, 1px);
+  box-shadow: 1.5px 1.5px 0px #18121E;
+}
+
+.tutr-badge {
+  display: inline-flex;
+  align-items: center;
+  border: 2px solid #18121E;
+  border-radius: 9999px;
+  box-shadow: 1.5px 1.5px 0px #18121E;
+  font-weight: 600;
 }
 
 /* Custom subtle scrollbar */
@@ -33,12 +142,13 @@ body {
   width: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #F5EFEB;
+  background: #EDE8F8;
 }
 ::-webkit-scrollbar-thumb {
-  background: #C8D9E6;
+  background: #CBB7F0;
   border-radius: 4px;
+  border: 1px solid #18121E;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #567C8D;
+  background: #BA9EE8;
 }

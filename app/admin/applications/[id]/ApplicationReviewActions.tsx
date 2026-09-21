@@ -135,36 +135,36 @@ export function ApplicationReviewActions({
   };
 
   return (
-    <div className="bg-white rounded-3xl border border-navy/10 p-6 shadow-sm">
-      <div className="flex items-center justify-between mb-4 border-b border-navy/10 pb-4">
+    <div className="bg-white rounded-3xl border-2 border-ink p-6 shadow-[3px_3px_0px_#18121E]">
+      <div className="flex items-center justify-between mb-4 border-b-2 border-ink/10 pb-4">
         <div>
-          <h2 className="text-lg font-bold text-navy">Review Decision & Status</h2>
-          <p className="text-xs text-navy/60">
+          <h2 className="text-lg font-black text-ink">Review Decision & Status</h2>
+          <p className="text-xs text-ink/70">
             Administrative workflow controls governed by database state constraints.
           </p>
         </div>
 
         <div className="flex items-center gap-2">
           {status === "PENDING" && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-800 border border-amber-200">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black bg-warm-honey text-ink border border-ink">
               <Clock className="w-3.5 h-3.5" />
               PENDING
             </span>
           )}
           {status === "UNDER_REVIEW" && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-sky-50 text-sky-800 border border-sky-200">
-              <Play className="w-3.5 h-3.5 fill-current" />
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black bg-soft-purple text-ink border border-ink">
+              <Play className="w-3.5 h-3.5 fill-current text-purple-800" />
               UNDER REVIEW
             </span>
           )}
           {status === "APPROVED" && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200">
-              <CheckCircle className="w-3.5 h-3.5" />
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black bg-mint text-ink border border-ink">
+              <CheckCircle className="w-3.5 h-3.5 text-emerald-800" />
               APPROVED
             </span>
           )}
           {status === "REJECTED" && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-rose-50 text-rose-800 border border-rose-200">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black bg-rose-400 text-white border border-ink">
               <XCircle className="w-3.5 h-3.5" />
               REJECTED
             </span>
@@ -173,33 +173,33 @@ export function ApplicationReviewActions({
       </div>
 
       {errorMsg && (
-        <div className="mb-4 p-4 rounded-2xl bg-red-50 border border-red-200 flex items-start gap-3 text-red-700 text-xs">
-          <ShieldAlert className="w-4 h-4 flex-shrink-0 mt-0.5" />
-          <div className="flex-1 font-medium">{errorMsg}</div>
+        <div className="mb-4 p-4 rounded-2xl bg-rose-50 border-2 border-ink flex items-start gap-3 text-rose-800 text-xs shadow-[2px_2px_0px_#18121E]">
+          <ShieldAlert className="w-4 h-4 flex-shrink-0 mt-0.5 text-rose-600" />
+          <div className="flex-1 font-bold">{errorMsg}</div>
         </div>
       )}
 
       {successMsg && (
-        <div className="mb-4 p-4 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-start gap-3 text-emerald-800 text-xs">
-          <CheckCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
-          <div className="flex-1 font-medium">{successMsg}</div>
+        <div className="mb-4 p-4 rounded-2xl bg-mint/40 border-2 border-ink flex items-start gap-3 text-ink text-xs shadow-[2px_2px_0px_#18121E]">
+          <CheckCircle className="w-4 h-4 flex-shrink-0 mt-0.5 text-emerald-700" />
+          <div className="flex-1 font-bold">{successMsg}</div>
         </div>
       )}
 
       {/* Action Buttons based on status */}
       <div className="space-y-4">
         {status === "PENDING" && (
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-2xl bg-beige-light/70 border border-navy/10">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-2xl bg-canvas-lavender/40 border-2 border-ink">
             <div>
-              <p className="text-sm font-semibold text-navy">Application Awaiting Intake Review</p>
-              <p className="text-xs text-navy/60">
+              <p className="text-sm font-black text-ink">Application Awaiting Intake Review</p>
+              <p className="text-xs text-ink/70">
                 Move to Under Review before making a final approval or rejection decision.
               </p>
             </div>
             <button
               onClick={handleStartReview}
               disabled={isPending}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-navy text-white text-sm font-semibold hover:bg-navy-dark transition-colors disabled:opacity-50"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-ink text-white text-sm font-bold border-2 border-ink shadow-[2px_2px_0px_#F28F85] hover:-translate-y-0.5 active:translate-y-0 transition-transform disabled:opacity-50"
             >
               {isPending ? (
                 <>
@@ -208,7 +208,7 @@ export function ApplicationReviewActions({
                 </>
               ) : (
                 <>
-                  <Play className="w-4 h-4 fill-current" />
+                  <Play className="w-4 h-4 fill-current text-warm-coral" />
                   <span>Start Review</span>
                 </>
               )}
@@ -218,21 +218,21 @@ export function ApplicationReviewActions({
 
         {status === "UNDER_REVIEW" && (
           <div className="space-y-4">
-            <div className="p-4 rounded-2xl bg-sky-50/60 border border-sky-200 text-xs text-navy/80">
-              <p className="font-semibold text-navy mb-1">Active Review State</p>
-              <p>
+            <div className="p-4 rounded-2xl bg-soft-purple/30 border-2 border-ink text-xs text-ink">
+              <p className="font-black text-ink mb-1">Active Review State</p>
+              <p className="font-medium text-ink/80">
                 Verify teaching qualifications, experience, and uploaded certificates below.
                 Approving will atomically provision a verified tutor profile on the public marketplace.
               </p>
             </div>
 
             {!userId && (
-              <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-amber-900">
+              <div className="p-4 rounded-2xl bg-warm-honey/40 border-2 border-ink flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-ink shadow-[2px_2px_0px_#18121E]">
                 <div className="flex items-start gap-2">
-                  <AlertTriangle className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
+                  <AlertTriangle className="w-4 h-4 text-amber-700 flex-shrink-0 mt-0.5" />
                   <div>
-                    <p className="font-bold">Applicant Not Linked to a Tutr User Account</p>
-                    <p className="text-amber-800">
+                    <p className="font-black">Applicant Not Linked to a Tutr User Account</p>
+                    <p className="text-ink/80 font-medium">
                       Approval requires an authenticated Tutr user account. You can link this application to an existing registered user.
                     </p>
                   </div>
@@ -242,7 +242,7 @@ export function ApplicationReviewActions({
                     setErrorMsg(null);
                     setShowLinkModal(true);
                   }}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-amber-600 hover:bg-amber-700 text-white font-semibold text-xs transition-colors flex-shrink-0"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-warm-honey hover:bg-warm-honey/90 text-ink border-2 border-ink font-bold text-xs transition-transform active:translate-y-0.5 shadow-[2px_2px_0px_#18121E] flex-shrink-0"
                 >
                   <Link2 className="w-3.5 h-3.5" />
                   <span>Link User Account</span>
@@ -257,9 +257,9 @@ export function ApplicationReviewActions({
                   setShowApproveModal(true);
                 }}
                 disabled={isPending}
-                className="w-full sm:w-1/2 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm transition-colors shadow-sm disabled:opacity-50"
+                className="w-full sm:w-1/2 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-mint hover:bg-mint/90 text-ink border-2 border-ink font-black text-sm transition-transform active:translate-y-0.5 shadow-[3px_3px_0px_#18121E] disabled:opacity-50"
               >
-                <CheckCircle className="w-4 h-4" />
+                <CheckCircle className="w-4 h-4 text-emerald-800" />
                 <span>Approve Application</span>
               </button>
 
@@ -269,7 +269,7 @@ export function ApplicationReviewActions({
                   setShowRejectModal(true);
                 }}
                 disabled={isPending}
-                className="w-full sm:w-1/2 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-rose-600 hover:bg-rose-700 text-white font-semibold text-sm transition-colors shadow-sm disabled:opacity-50"
+                className="w-full sm:w-1/2 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-rose-400 hover:bg-rose-500 text-white border-2 border-ink font-black text-sm transition-transform active:translate-y-0.5 shadow-[3px_3px_0px_#18121E] disabled:opacity-50"
               >
                 <XCircle className="w-4 h-4" />
                 <span>Reject Application</span>
@@ -279,31 +279,31 @@ export function ApplicationReviewActions({
         )}
 
         {status === "APPROVED" && (
-          <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900">
-            <p className="font-bold flex items-center gap-2 mb-1">
-              <CheckCircle className="w-4 h-4 text-emerald-600" />
+          <div className="p-4 rounded-2xl bg-mint/30 border-2 border-ink text-xs text-ink shadow-[2px_2px_0px_#18121E]">
+            <p className="font-black flex items-center gap-2 mb-1">
+              <CheckCircle className="w-4 h-4 text-emerald-700" />
               Application Approved & Profile Provisioned
             </p>
-            <p>
-              This tutor is verified (<code className="bg-emerald-100 px-1 py-0.5 rounded font-mono">is_verified = true</code>)
+            <p className="font-medium text-ink/80">
+              This tutor is verified (<code className="bg-white px-1 py-0.5 rounded font-mono font-bold border border-ink">is_verified = true</code>)
               and eligible to appear on the public Balasore tutor marketplace view.
             </p>
           </div>
         )}
 
         {status === "REJECTED" && (
-          <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-xs text-rose-900">
-            <p className="font-bold flex items-center gap-2 mb-1">
+          <div className="p-4 rounded-2xl bg-rose-50 border-2 border-ink text-xs text-ink shadow-[2px_2px_0px_#18121E]">
+            <p className="font-black flex items-center gap-2 mb-1 text-rose-800">
               <XCircle className="w-4 h-4 text-rose-600" />
               Application Rejected
             </p>
-            <p className="mb-2">
+            <p className="mb-2 font-medium text-ink/80">
               This application was denied by an administrator and does not have an active public tutor profile.
             </p>
             {rejectionReason && (
-              <div className="p-3 bg-white rounded-xl border border-rose-200 font-sans">
-                <span className="font-semibold text-rose-950">Reason: </span>
-                {rejectionReason}
+              <div className="p-3 bg-white rounded-xl border-2 border-ink font-sans">
+                <span className="font-bold text-ink">Reason: </span>
+                <span className="font-medium text-ink/80">{rejectionReason}</span>
               </div>
             )}
           </div>
@@ -312,17 +312,17 @@ export function ApplicationReviewActions({
 
       {/* Approve Confirmation Modal */}
       {showApproveModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-navy/50 p-4 backdrop-blur-xs">
-          <div className="max-w-md w-full bg-white rounded-3xl p-6 sm:p-8 shadow-xl border border-navy/10 animate-in fade-in zoom-in-95">
-            <div className="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 mb-4">
-              <CheckCircle className="w-6 h-6" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/50 p-4 backdrop-blur-xs">
+          <div className="max-w-md w-full bg-white rounded-3xl p-6 sm:p-8 shadow-[6px_6px_0px_#18121E] border-2 border-ink animate-in fade-in zoom-in-95">
+            <div className="w-12 h-12 rounded-2xl bg-mint border-2 border-ink flex items-center justify-center text-ink mb-4 shadow-[2px_2px_0px_#18121E]">
+              <CheckCircle className="w-6 h-6 text-emerald-800" />
             </div>
 
-            <h3 className="text-xl font-bold text-navy mb-2">Confirm Tutor Approval</h3>
-            <p className="text-xs text-navy/70 mb-6 leading-relaxed">
+            <h3 className="text-xl font-black text-ink mb-2">Confirm Tutor Approval</h3>
+            <p className="text-xs text-ink/80 mb-6 leading-relaxed font-medium">
               This will mark the application as <strong>APPROVED</strong> and atomically provision a
-              verified profile in <code className="bg-beige-light px-1 py-0.5 rounded font-mono">public.tutor_profiles</code> with{" "}
-              <code className="bg-emerald-50 text-emerald-800 px-1 py-0.5 rounded font-mono">is_verified = true</code>.
+              verified profile in <code className="bg-canvas-lavender px-1 py-0.5 rounded font-mono font-bold border border-ink">public.tutor_profiles</code> with{" "}
+              <code className="bg-mint text-ink px-1 py-0.5 rounded font-mono font-bold border border-ink">is_verified = true</code>.
             </p>
 
             <div className="flex items-center justify-end gap-3">
@@ -330,7 +330,7 @@ export function ApplicationReviewActions({
                 type="button"
                 onClick={() => setShowApproveModal(false)}
                 disabled={isPending}
-                className="px-5 py-2 rounded-full border border-navy/20 hover:bg-beige/40 text-navy text-xs font-semibold transition-colors"
+                className="px-5 py-2 rounded-full border-2 border-ink hover:bg-canvas-lavender text-ink text-xs font-bold transition-all shadow-[2px_2px_0px_#18121E]"
               >
                 Cancel
               </button>
@@ -338,7 +338,7 @@ export function ApplicationReviewActions({
                 type="button"
                 onClick={handleApprove}
                 disabled={isPending}
-                className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition-colors shadow-sm disabled:opacity-50"
+                className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-mint hover:bg-mint/90 text-ink border-2 border-ink text-xs font-black transition-transform active:translate-y-0.5 shadow-[2px_2px_0px_#18121E] disabled:opacity-50"
               >
                 {isPending ? (
                   <>
@@ -356,21 +356,21 @@ export function ApplicationReviewActions({
 
       {/* Reject Reason Modal */}
       {showRejectModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-navy/50 p-4 backdrop-blur-xs">
-          <div className="max-w-md w-full bg-white rounded-3xl p-6 sm:p-8 shadow-xl border border-navy/10 animate-in fade-in zoom-in-95">
-            <div className="w-12 h-12 rounded-2xl bg-rose-50 border border-rose-200 flex items-center justify-center text-rose-600 mb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/50 p-4 backdrop-blur-xs">
+          <div className="max-w-md w-full bg-white rounded-3xl p-6 sm:p-8 shadow-[6px_6px_0px_#18121E] border-2 border-ink animate-in fade-in zoom-in-95">
+            <div className="w-12 h-12 rounded-2xl bg-rose-100 border-2 border-ink flex items-center justify-center text-rose-600 mb-4 shadow-[2px_2px_0px_#18121E]">
               <AlertTriangle className="w-6 h-6" />
             </div>
 
-            <h3 className="text-xl font-bold text-navy mb-2">Reject Tutor Application</h3>
-            <p className="text-xs text-navy/70 mb-4 leading-relaxed">
+            <h3 className="text-xl font-black text-ink mb-2">Reject Tutor Application</h3>
+            <p className="text-xs text-ink/80 mb-4 leading-relaxed font-medium">
               Please document the specific reason for rejecting this application. This audit log will be
               preserved in the database.
             </p>
 
             <div className="mb-4">
-              <label htmlFor="rejectionReason" className="block text-xs font-semibold text-navy mb-1.5">
-                Rejection Reason <span className="text-red-500">*</span>
+              <label htmlFor="rejectionReason" className="block text-xs font-bold text-ink mb-1.5">
+                Rejection Reason <span className="text-rose-500">*</span>
               </label>
               <textarea
                 id="rejectionReason"
@@ -379,9 +379,9 @@ export function ApplicationReviewActions({
                 onChange={(e) => setReasonText(e.target.value)}
                 placeholder="e.g. Qualifications could not be verified; certificates incomplete or missing."
                 maxLength={1000}
-                className="w-full rounded-2xl border border-navy/20 p-3 text-xs text-navy focus:outline-none focus:ring-2 focus:ring-rose-400"
+                className="w-full rounded-2xl border-2 border-ink p-3 text-xs text-ink focus:outline-none focus:ring-2 focus:ring-rose-400"
               />
-              <div className="flex justify-between items-center text-[10px] text-navy/50 mt-1">
+              <div className="flex justify-between items-center text-[10px] text-ink/60 mt-1 font-bold">
                 <span>Min 3 characters</span>
                 <span>{reasonText.length}/1000</span>
               </div>
@@ -392,7 +392,7 @@ export function ApplicationReviewActions({
                 type="button"
                 onClick={() => setShowRejectModal(false)}
                 disabled={isPending}
-                className="px-5 py-2 rounded-full border border-navy/20 hover:bg-beige/40 text-navy text-xs font-semibold transition-colors"
+                className="px-5 py-2 rounded-full border-2 border-ink hover:bg-canvas-lavender text-ink text-xs font-bold transition-all shadow-[2px_2px_0px_#18121E]"
               >
                 Cancel
               </button>
@@ -400,7 +400,7 @@ export function ApplicationReviewActions({
                 type="button"
                 onClick={handleReject}
                 disabled={isPending || reasonText.trim().length < 3}
-                className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold transition-colors shadow-sm disabled:opacity-50"
+                className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-rose-400 hover:bg-rose-500 text-white border-2 border-ink text-xs font-black transition-transform active:translate-y-0.5 shadow-[2px_2px_0px_#18121E] disabled:opacity-50"
               >
                 {isPending ? (
                   <>
@@ -418,19 +418,19 @@ export function ApplicationReviewActions({
 
       {/* Link User Modal */}
       {showLinkModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-navy/50 p-4 backdrop-blur-xs">
-          <div className="max-w-md w-full bg-white rounded-3xl p-6 sm:p-8 shadow-xl border border-navy/10 animate-in fade-in zoom-in-95">
-            <div className="w-12 h-12 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600 mb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/50 p-4 backdrop-blur-xs">
+          <div className="max-w-md w-full bg-white rounded-3xl p-6 sm:p-8 shadow-[6px_6px_0px_#18121E] border-2 border-ink animate-in fade-in zoom-in-95">
+            <div className="w-12 h-12 rounded-2xl bg-warm-honey border-2 border-ink flex items-center justify-center text-ink mb-4 shadow-[2px_2px_0px_#18121E]">
               <Link2 className="w-6 h-6" />
             </div>
 
-            <h3 className="text-xl font-bold text-navy mb-2">Link Tutr User Account</h3>
-            <p className="text-xs text-navy/70 mb-4 leading-relaxed">
+            <h3 className="text-xl font-black text-ink mb-2">Link Tutr User Account</h3>
+            <p className="text-xs text-ink/80 mb-4 leading-relaxed font-medium">
               Search for the registered Tutr user account (by email or full name) to associate with this application.
             </p>
 
             <div className="mb-4">
-              <label htmlFor="userSearch" className="block text-xs font-semibold text-navy mb-1.5">
+              <label htmlFor="userSearch" className="block text-xs font-bold text-ink mb-1.5">
                 Search Registered Users
               </label>
               <div className="relative">
@@ -440,11 +440,11 @@ export function ApplicationReviewActions({
                   value={searchQuery}
                   onChange={(e) => handleSearchUsers(e.target.value)}
                   placeholder="Type email (e.g. surajbasa...) or name"
-                  className="w-full rounded-2xl border border-navy/20 pl-9 pr-4 py-2.5 text-xs text-navy focus:outline-none focus:ring-2 focus:ring-amber-400"
+                  className="w-full rounded-2xl border-2 border-ink pl-9 pr-4 py-2.5 text-xs text-ink focus:outline-none focus:ring-2 focus:ring-warm-honey"
                 />
-                <Search className="w-4 h-4 text-navy/40 absolute left-3 top-3" />
+                <Search className="w-4 h-4 text-ink/40 absolute left-3 top-3" />
                 {isSearching && (
-                  <Loader2 className="w-3.5 h-3.5 text-amber-600 animate-spin absolute right-3 top-3" />
+                  <Loader2 className="w-3.5 h-3.5 text-ink animate-spin absolute right-3 top-3" />
                 )}
               </div>
             </div>
@@ -459,17 +459,17 @@ export function ApplicationReviewActions({
                       key={u.id}
                       type="button"
                       onClick={() => setSelectedUser(u)}
-                      className={`w-full text-left p-3 rounded-xl border text-xs transition-all flex items-center justify-between ${
+                      className={`w-full text-left p-3 rounded-xl border-2 border-ink text-xs transition-all flex items-center justify-between ${
                         isSelected
-                          ? "bg-amber-50 border-amber-400 text-amber-950 font-medium shadow-xs"
-                          : "bg-beige-light/40 border-navy/10 text-navy hover:bg-beige-light"
+                          ? "bg-warm-honey text-ink font-bold shadow-[2px_2px_0px_#18121E]"
+                          : "bg-white text-ink hover:bg-canvas-lavender"
                       }`}
                     >
                       <div className="min-w-0 pr-2">
-                        <p className="font-bold truncate">{u.full_name || "Unnamed User"}</p>
-                        <p className="text-[11px] text-navy/60 font-mono truncate">{u.email}</p>
+                        <p className="font-black truncate">{u.full_name || "Unnamed User"}</p>
+                        <p className="text-[11px] text-ink/70 font-mono truncate">{u.email}</p>
                       </div>
-                      {isSelected && <UserCheck className="w-4 h-4 text-amber-600 flex-shrink-0" />}
+                      {isSelected && <UserCheck className="w-4 h-4 text-ink flex-shrink-0" />}
                     </button>
                   );
                 })}
@@ -477,8 +477,8 @@ export function ApplicationReviewActions({
             )}
 
             {selectedUser && (
-              <div className="mb-4 p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900">
-                <span className="font-bold">Selected Account: </span>
+              <div className="mb-4 p-3 rounded-xl bg-mint/40 border-2 border-ink text-xs text-ink font-bold">
+                <span>Selected Account: </span>
                 <span>{selectedUser.full_name} ({selectedUser.email})</span>
               </div>
             )}
@@ -493,7 +493,7 @@ export function ApplicationReviewActions({
                   setSearchResults([]);
                 }}
                 disabled={isPending}
-                className="px-5 py-2 rounded-full border border-navy/20 hover:bg-beige/40 text-navy text-xs font-semibold transition-colors"
+                className="px-5 py-2 rounded-full border-2 border-ink hover:bg-canvas-lavender text-ink text-xs font-bold transition-all shadow-[2px_2px_0px_#18121E]"
               >
                 Cancel
               </button>
@@ -501,7 +501,7 @@ export function ApplicationReviewActions({
                 type="button"
                 onClick={handleLinkUser}
                 disabled={isPending || !selectedUser}
-                className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold transition-colors shadow-sm disabled:opacity-50"
+                className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-warm-honey hover:bg-warm-honey/90 text-ink border-2 border-ink text-xs font-black transition-transform active:translate-y-0.5 shadow-[2px_2px_0px_#18121E] disabled:opacity-50"
               >
                 {isPending ? (
                   <>

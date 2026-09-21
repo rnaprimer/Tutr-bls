@@ -2,7 +2,6 @@ import React from "react";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import {
-  MapPin,
   CheckCircle2,
   Lock,
   Phone,
@@ -112,18 +111,17 @@ export default async function ConnectionDetailPage({ params }: ConnectionPagePro
   const unlockedTutor = contacts?.tutor;
 
   return (
-    <div className="min-h-screen flex flex-col justify-between bg-beige-light/30">
+    <div className="min-h-screen flex flex-col justify-between bg-canvas-lavender">
       {/* Top Header */}
-      <header className="w-full bg-white/95 border-b border-navy/10 px-4 sm:px-6 lg:px-8 py-4">
+      <header className="w-full bg-white/80 backdrop-blur border-b-2 border-ink px-4 sm:px-6 lg:px-8 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link
               href="/"
-              className="flex items-center gap-2 text-2xl font-bold tracking-tight text-navy"
+              className="flex items-center gap-2 text-2xl font-black tracking-tight text-ink"
             >
               <span>Tutr</span>
-              <span className="inline-flex items-center gap-1 text-[11px] font-medium tracking-wide uppercase px-2 py-0.5 rounded-full bg-sky/50 text-navy-dark border border-sky">
-                <MapPin className="w-3 h-3 text-teal" />
+              <span className="font-handwritten text-base px-2.5 py-0.5 rounded-full bg-honey/30 text-ink border border-ink shadow-[1px_1px_0px_#18121E]">
                 Balasore
               </span>
             </Link>
@@ -132,7 +130,7 @@ export default async function ConnectionDetailPage({ params }: ConnectionPagePro
           <div className="flex items-center gap-3">
             <Link
               href="/student/connections"
-              className="text-xs font-semibold text-navy/70 hover:text-navy px-3 py-1.5 rounded-full hover:bg-beige/60 transition-colors"
+              className="text-xs font-bold text-ink hover:text-warm-coral px-3 py-1.5 rounded-full border-2 border-ink bg-white shadow-[2px_2px_0px_#18121E] transition-colors"
             >
               All Connections
             </Link>
@@ -145,117 +143,117 @@ export default async function ConnectionDetailPage({ params }: ConnectionPagePro
         <div className="mb-6">
           <Link
             href="/student/connections"
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-navy/60 hover:text-navy transition-colors mb-4"
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-ink/70 hover:text-warm-coral transition-colors mb-4"
           >
-            <ArrowLeft className="w-3.5 h-3.5" />
+            <ArrowLeft className="w-3.5 h-3.5 text-warm-coral" />
             <span>Back to Connections</span>
           </Link>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-navy tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-black text-ink tracking-tight">
             Connection with {tutor?.display_name}
           </h1>
-          <p className="text-xs text-navy/60 mt-1">
+          <p className="text-xs text-ink/70 font-medium mt-1">
             Request accepted for {subjectName} ({className}).
           </p>
         </div>
 
-        <div className="bg-white rounded-3xl border border-navy/10 p-6 sm:p-8 shadow-sm space-y-6">
+        <div className="tutr-card bg-white p-6 sm:p-8 space-y-6">
           {/* Status Banner */}
-          <div className="flex flex-wrap items-center justify-between gap-3 p-4 rounded-2xl bg-sky/30 border border-sky/40">
-            <div className="flex items-center gap-2 text-xs font-bold text-navy">
-              <CheckCircle2 className="w-4 h-4 text-teal" />
-              <span>Your request has been accepted by this educator.</span>
+          <div className="flex flex-wrap items-center justify-between gap-3 p-4 rounded-2xl bg-canvas-lavender border-2 border-ink shadow-[2px_2px_0px_#18121E]">
+            <div className="flex items-center gap-2 text-xs font-black text-ink">
+              <CheckCircle2 className="w-4 h-4 text-emerald-800" />
+              <span>Your request has been accepted by this educator!</span>
             </div>
             {isUnlocked ? (
-              <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-800 bg-emerald-100 px-3 py-1 rounded-full border border-emerald-200">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-700" />
+              <span className="inline-flex items-center gap-1 text-xs font-bold text-ink bg-mint-badge/40 px-3 py-1 rounded-full border border-ink shadow-[1px_1px_0px_#18121E]">
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-800" />
                 Contact Unlocked
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1 text-xs font-bold text-amber-800 bg-amber-100 px-3 py-1 rounded-full border border-amber-200">
-                <Lock className="w-3.5 h-3.5 text-amber-700" />
+              <span className="inline-flex items-center gap-1 text-xs font-bold text-ink bg-honey/30 px-3 py-1 rounded-full border border-ink shadow-[1px_1px_0px_#18121E]">
+                <Lock className="w-3.5 h-3.5 text-warm-coral" />
                 Contact Locked
               </span>
             )}
           </div>
 
           {/* Details Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs text-navy/80">
-            <div className="space-y-1">
-              <span className="text-[10px] uppercase font-bold text-navy/40">Subject & Class</span>
-              <p className="font-semibold text-navy">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs text-ink font-medium">
+            <div className="p-3.5 rounded-xl bg-canvas-lavender/50 border border-ink/20 space-y-1">
+              <span className="text-[10px] uppercase font-bold text-ink/50">Subject & Class</span>
+              <p className="font-bold text-ink">
                 {subjectName} • {className}
               </p>
             </div>
 
-            <div className="space-y-1">
-              <span className="text-[10px] uppercase font-bold text-navy/40">Tutor Locality</span>
-              <p className="font-semibold text-navy">{tutor?.locality || "Balasore"}</p>
+            <div className="p-3.5 rounded-xl bg-canvas-lavender/50 border border-ink/20 space-y-1">
+              <span className="text-[10px] uppercase font-bold text-ink/50">Tutor Locality</span>
+              <p className="font-bold text-ink">{tutor?.locality || "Balasore"}</p>
             </div>
 
             {tutor?.fee && (
-              <div className="space-y-1">
-                <span className="text-[10px] uppercase font-bold text-navy/40">Tutor&apos;s Stated Fee</span>
-                <p className="font-semibold text-navy">₹{tutor.fee} / month</p>
+              <div className="p-3.5 rounded-xl bg-canvas-lavender/50 border border-ink/20 space-y-1">
+                <span className="text-[10px] uppercase font-bold text-ink/50">Tutor&apos;s Stated Fee</span>
+                <p className="font-bold text-ink">₹{tutor.fee} / month</p>
               </div>
             )}
 
-            <div className="space-y-1">
-              <span className="text-[10px] uppercase font-bold text-navy/40">Tutr Platform Connection Fee</span>
-              <p className="font-semibold text-emerald-700">₹{conn.amount} (One-time)</p>
+            <div className="p-3.5 rounded-xl bg-mint-badge/20 border border-ink/20 space-y-1">
+              <span className="text-[10px] uppercase font-bold text-ink/50">Tutr Platform Connection Fee</span>
+              <p className="font-black text-ink">₹{conn.amount} (One-time)</p>
             </div>
           </div>
 
           {/* Unlocked Contact Disclosure vs Checkout CTA */}
           {isUnlocked && unlockedTutor ? (
-            <div className="p-6 rounded-2xl bg-emerald-50 border border-emerald-200 space-y-4">
-              <div className="flex items-center gap-2 text-emerald-900 font-bold text-sm">
-                <ShieldCheck className="w-5 h-5 text-emerald-700" />
+            <div className="p-6 rounded-2xl bg-mint-badge/20 border-2 border-ink space-y-4 shadow-[2px_2px_0px_#18121E]">
+              <div className="flex items-center gap-2 text-ink font-black text-sm">
+                <ShieldCheck className="w-5 h-5 text-emerald-800" />
                 <span>Verified Tutor Contact Details</span>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {unlockedTutor.phone && (
-                  <div className="p-4 bg-white rounded-xl border border-emerald-100">
-                    <span className="text-[10px] uppercase font-bold text-navy/40 block mb-1">
+                  <div className="p-4 bg-white rounded-xl border-2 border-ink shadow-[1px_1px_0px_#18121E]">
+                    <span className="text-[10px] uppercase font-bold text-ink/50 block mb-1">
                       Direct Mobile Number
                     </span>
                     <a
                       href={`tel:${unlockedTutor.phone}`}
-                      className="font-bold text-navy text-base hover:text-teal flex items-center gap-2"
+                      className="font-black text-ink text-base hover:text-warm-coral flex items-center gap-2"
                     >
-                      <Phone className="w-4 h-4 text-emerald-700" />
+                      <Phone className="w-4 h-4 text-emerald-800" />
                       <span>{unlockedTutor.phone}</span>
                     </a>
                   </div>
                 )}
 
                 {unlockedTutor.email && (
-                  <div className="p-4 bg-white rounded-xl border border-emerald-100">
-                    <span className="text-[10px] uppercase font-bold text-navy/40 block mb-1">
+                  <div className="p-4 bg-white rounded-xl border-2 border-ink shadow-[1px_1px_0px_#18121E]">
+                    <span className="text-[10px] uppercase font-bold text-ink/50 block mb-1">
                       Direct Email Address
                     </span>
                     <a
                       href={`mailto:${unlockedTutor.email}`}
-                      className="font-bold text-navy text-base hover:text-teal flex items-center gap-2"
+                      className="font-black text-ink text-base hover:text-warm-coral flex items-center gap-2"
                     >
-                      <Mail className="w-4 h-4 text-emerald-700" />
+                      <Mail className="w-4 h-4 text-emerald-800" />
                       <span>{unlockedTutor.email}</span>
                     </a>
                   </div>
                 )}
               </div>
 
-              <p className="text-[11px] text-navy/60 leading-relaxed">
+              <p className="text-[11px] text-ink/70 font-medium leading-relaxed">
                 Connect directly with {tutor?.display_name} to confirm home or batch tuition schedules.
               </p>
             </div>
           ) : (
-            <div className="p-6 rounded-2xl bg-beige-light/70 border border-navy/10 space-y-4">
-              <div className="flex items-center gap-2 text-xs font-bold text-navy">
-                <Lock className="w-4 h-4 text-teal" />
+            <div className="p-6 rounded-2xl bg-canvas-lavender border-2 border-ink space-y-4 shadow-[2px_2px_0px_#18121E]">
+              <div className="flex items-center gap-2 text-xs font-black text-ink">
+                <Lock className="w-4 h-4 text-warm-coral" />
                 <span>Unlock Contact Information</span>
               </div>
-              <p className="text-xs text-navy/70 leading-relaxed">
+              <p className="text-xs text-ink/70 font-medium leading-relaxed">
                 To protect our educators and maintain a verified network in Balasore, direct contact information is unlocked upon paying the one-time platform connection fee.
               </p>
 
@@ -273,7 +271,7 @@ export default async function ConnectionDetailPage({ params }: ConnectionPagePro
         </div>
       </main>
 
-      <footer className="text-center py-6 text-xs text-navy/50 border-t border-navy/10 bg-white/60">
+      <footer className="text-center py-6 text-xs font-bold text-ink/60 border-t-2 border-ink/20 bg-white/60">
         <p>© {new Date().getFullYear()} Tutr • Hyperlocal tutoring in Balasore, Odisha.</p>
       </footer>
     </div>

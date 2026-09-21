@@ -31,23 +31,22 @@ export default async function AdminPage() {
 
   if (!isAdmin) {
     return (
-      <div className="min-h-screen flex flex-col justify-between bg-beige-light/40">
-        <header className="w-full bg-white/95 border-b border-navy/10 px-4 sm:px-6 lg:px-8 py-4">
+      <div className="min-h-screen flex flex-col justify-between bg-canvas-lavender">
+        <header className="w-full bg-white/80 backdrop-blur border-b-2 border-ink px-4 sm:px-6 lg:px-8 py-4">
           <div className="max-w-7xl mx-auto flex items-center justify-between">
             <Link
               href="/"
-              className="flex items-center gap-2 text-2xl font-bold tracking-tight text-navy"
+              className="flex items-center gap-2 text-2xl font-black tracking-tight text-ink"
             >
               <span>Tutr</span>
-              <span className="inline-flex items-center gap-1 text-[11px] font-medium tracking-wide uppercase px-2 py-0.5 rounded-full bg-sky/50 text-navy-dark border border-sky">
-                <MapPin className="w-3 h-3 text-teal" />
+              <span className="font-handwritten text-base px-2.5 py-0.5 rounded-full bg-honey/30 text-ink border border-ink shadow-[1px_1px_0px_#18121E]">
                 Balasore
               </span>
             </Link>
 
             <div className="flex items-center gap-4">
-              <div className="hidden sm:flex items-center gap-2 text-xs font-medium text-navy/70">
-                <User className="w-4 h-4 text-teal" />
+              <div className="hidden sm:flex items-center gap-2 text-xs font-bold text-ink/70">
+                <User className="w-4 h-4 text-warm-coral" />
                 <span>{user.email}</span>
               </div>
               <SignOutButton />
@@ -56,36 +55,36 @@ export default async function AdminPage() {
         </header>
 
         <main className="flex-1 flex items-center justify-center px-4 py-16 sm:py-24">
-          <div className="max-w-md w-full bg-white rounded-3xl border border-red-200 p-8 sm:p-12 shadow-sm text-center">
-            <div className="w-16 h-16 rounded-2xl bg-red-50 border border-red-200 flex items-center justify-center text-red-600 mx-auto mb-6">
-              <ShieldAlert className="w-8 h-8" />
+          <div className="max-w-md w-full tutr-card bg-white p-8 sm:p-12 text-center">
+            <div className="w-16 h-16 rounded-2xl bg-rose-50 border-2 border-ink flex items-center justify-center text-ink mx-auto mb-6 shadow-[3px_3px_0px_#18121E]">
+              <ShieldAlert className="w-8 h-8 text-rose-600" />
             </div>
 
-            <div className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-red-700 bg-red-100 px-3 py-1 rounded-full mb-4">
+            <div className="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-wider text-rose-800 bg-rose-100 border-2 border-ink px-3 py-1 rounded-full mb-4 shadow-[1px_1px_0px_#18121E]">
               403 Forbidden
             </div>
 
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-navy mb-2">
+            <h1 className="text-2xl sm:text-3xl font-black text-ink mb-2">
               Access Denied
             </h1>
 
-            <p className="text-sm text-navy/70 mb-6 leading-relaxed">
-              You are signed in as <strong className="text-navy">{user.email}</strong>, but this account does not have administrator privileges.
+            <p className="text-sm text-ink/70 mb-6 leading-relaxed font-medium">
+              You are signed in as <strong className="text-ink">{user.email}</strong>, but this account does not have administrator privileges.
             </p>
 
-            <div className="p-4 rounded-2xl bg-beige-light/80 border border-navy/10 text-xs text-navy/70 mb-8 text-left">
-              <p className="font-semibold text-navy mb-1">Server Authorization Check</p>
+            <div className="p-4 rounded-2xl bg-canvas-lavender border-2 border-ink/40 text-xs text-ink/80 mb-8 text-left space-y-1 font-medium shadow-[2px_2px_0px_rgba(24,18,30,0.1)]">
+              <p className="font-bold text-ink mb-1">Server Authorization Check</p>
               <p>User Identity: Validated</p>
-              <p>Database Role: <span className="font-mono text-navy">{profile?.role || "USER"}</span></p>
-              <p>Required Role: <span className="font-mono text-red-600">ADMIN</span></p>
+              <p>Database Role: <span className="font-mono font-bold text-ink">{profile?.role || "USER"}</span></p>
+              <p>Required Role: <span className="font-mono font-bold text-rose-600">ADMIN</span></p>
             </div>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
               <Link
                 href="/"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full border border-navy/20 hover:bg-beige/60 text-navy font-medium text-sm transition-colors"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full border-2 border-ink bg-white hover:bg-gray-50 text-ink font-bold text-xs transition-colors shadow-[2px_2px_0px_#18121E]"
               >
-                <ArrowLeft className="w-4 h-4 text-teal" />
+                <ArrowLeft className="w-4 h-4 text-warm-coral" />
                 <span>Back to Home</span>
               </Link>
               <SignOutButton className="w-full sm:w-auto" variant="primary" />
@@ -93,7 +92,7 @@ export default async function AdminPage() {
           </div>
         </main>
 
-        <footer className="text-center py-6 text-xs text-navy/50 border-t border-navy/10 bg-white/60">
+        <footer className="text-center py-6 text-xs font-bold text-ink/60 border-t-2 border-ink/20 bg-white/60">
           <p>© {new Date().getFullYear()} Tutr • Hyperlocal tutoring in Balasore, Odisha.</p>
         </footer>
       </div>
@@ -103,23 +102,22 @@ export default async function AdminPage() {
   const displayName = profile?.full_name || user.user_metadata?.full_name || user.email?.split("@")[0] || "Admin";
 
   return (
-    <div className="min-h-screen flex flex-col justify-between bg-beige-light/40">
-      <header className="w-full bg-white/95 border-b border-navy/10 px-4 sm:px-6 lg:px-8 py-4">
+    <div className="min-h-screen flex flex-col justify-between bg-canvas-lavender">
+      <header className="w-full bg-white/80 backdrop-blur border-b-2 border-ink px-4 sm:px-6 lg:px-8 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <Link
             href="/"
-            className="flex items-center gap-2 text-2xl font-bold tracking-tight text-navy"
+            className="flex items-center gap-2 text-2xl font-black tracking-tight text-ink"
           >
             <span>Tutr</span>
-            <span className="inline-flex items-center gap-1 text-[11px] font-medium tracking-wide uppercase px-2 py-0.5 rounded-full bg-sky/50 text-navy-dark border border-sky">
-              <MapPin className="w-3 h-3 text-teal" />
+            <span className="font-handwritten text-base px-2.5 py-0.5 rounded-full bg-honey/30 text-ink border border-ink shadow-[1px_1px_0px_#18121E]">
               Balasore
             </span>
           </Link>
 
           <div className="flex items-center gap-4">
-            <div className="hidden sm:flex items-center gap-2 text-xs font-medium text-navy/70">
-              <User className="w-4 h-4 text-teal" />
+            <div className="hidden sm:flex items-center gap-2 text-xs font-bold text-ink/70">
+              <User className="w-4 h-4 text-warm-coral" />
               <span>{user.email}</span>
             </div>
             <SignOutButton />
@@ -128,55 +126,55 @@ export default async function AdminPage() {
       </header>
 
       <main className="flex-1 flex items-center justify-center px-4 py-16 sm:py-24">
-        <div className="max-w-lg w-full bg-white rounded-3xl border border-navy/10 p-8 sm:p-12 shadow-sm text-center">
-          <div className="w-16 h-16 rounded-2xl bg-teal/10 border border-teal/30 flex items-center justify-center text-teal mx-auto mb-6">
-            <ShieldCheck className="w-8 h-8" />
+        <div className="max-w-lg w-full tutr-card bg-white p-8 sm:p-12 text-center">
+          <div className="w-16 h-16 rounded-2xl bg-mint-badge/30 border-2 border-ink flex items-center justify-center text-ink mx-auto mb-6 shadow-[3px_3px_0px_#18121E]">
+            <ShieldCheck className="w-8 h-8 text-emerald-800" />
           </div>
 
-          <div className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-teal bg-sky/30 px-3 py-1 rounded-full mb-4">
-            <MapPin className="w-3.5 h-3.5" />
+          <div className="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-wider text-ink bg-purple-accent/20 border border-ink px-3 py-1 rounded-full mb-4 shadow-[1px_1px_0px_#18121E]">
+            <MapPin className="w-3.5 h-3.5 text-warm-coral" />
             Balasore Administration
           </div>
 
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-navy mb-2">
+          <h1 className="text-2xl sm:text-3xl font-black text-ink mb-2">
             Welcome, {displayName}
           </h1>
 
-          <p className="text-sm font-semibold text-teal mb-6">
+          <p className="text-sm font-bold text-warm-coral mb-6">
             Admin Authorization Verified
           </p>
 
-          <div className="p-4 rounded-2xl bg-beige-light/80 border border-navy/10 text-sm text-navy/80 mb-6 leading-relaxed">
-            <p className="font-semibold text-navy mb-1">Administrative Shell Active</p>
-            <p className="text-xs text-navy/70">
+          <div className="p-4 rounded-2xl bg-canvas-lavender border-2 border-ink/40 text-sm text-ink mb-6 leading-relaxed font-medium shadow-[2px_2px_0px_rgba(24,18,30,0.1)]">
+            <p className="font-black text-ink mb-1">Administrative Shell Active</p>
+            <p className="text-xs text-ink/70">
               Balasore administrative authority verified. Tutor application ingestion, review lifecycle, and profile provisioning are operational.
             </p>
           </div>
 
-          <div className="mb-8 p-5 rounded-2xl bg-teal/5 border border-teal/20 text-left">
+          <div className="mb-8 p-5 rounded-3xl bg-warm-coral/15 border-2 border-ink text-left shadow-[3px_3px_0px_#18121E]">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-teal-dark">Application Management</span>
-              <span className="text-[10px] bg-teal/15 text-teal-dark px-2 py-0.5 rounded-full font-semibold">Phase 4C Live</span>
+              <span className="text-xs font-black uppercase tracking-wider text-ink">Application Management</span>
+              <span className="text-[10px] bg-mint-badge text-ink border border-ink px-2 py-0.5 rounded-full font-bold shadow-[1px_1px_0px_#18121E]">Live</span>
             </div>
-            <h2 className="text-base font-bold text-navy mb-1">Tutor Application Queue</h2>
-            <p className="text-xs text-navy/70 mb-4">
+            <h2 className="text-base font-black text-ink mb-1">Tutor Application Queue</h2>
+            <p className="text-xs text-ink/70 mb-4 font-medium">
               Review incoming Google Form applications, inspect credentials, and approve verified tutor profiles.
             </p>
             <Link
               href="/admin/applications"
-              className="w-full inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-navy text-white text-xs font-semibold hover:bg-navy-dark transition-colors shadow-xs"
+              className="w-full tutr-btn-coral py-2.5 px-5 text-xs flex items-center justify-center gap-2"
             >
               <span>Open Application Queue</span>
-              <ArrowLeft className="w-3.5 h-3.5 rotate-180 text-teal" />
+              <ArrowLeft className="w-3.5 h-3.5 rotate-180" />
             </Link>
           </div>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link
               href="/"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full border border-navy/20 hover:bg-beige/60 text-navy font-medium text-sm transition-colors"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full border-2 border-ink bg-white hover:bg-gray-50 text-ink font-bold text-xs transition-colors shadow-[2px_2px_0px_#18121E]"
             >
-              <ArrowLeft className="w-4 h-4 text-teal" />
+              <ArrowLeft className="w-4 h-4 text-warm-coral" />
               <span>Back to Home</span>
             </Link>
             <SignOutButton className="w-full sm:w-auto" variant="primary" />
@@ -184,7 +182,7 @@ export default async function AdminPage() {
         </div>
       </main>
 
-      <footer className="text-center py-6 text-xs text-navy/50 border-t border-navy/10 bg-white/60">
+      <footer className="text-center py-6 text-xs font-bold text-ink/60 border-t-2 border-ink/20 bg-white/60">
         <p>© {new Date().getFullYear()} Tutr • Hyperlocal tutoring in Balasore, Odisha.</p>
       </footer>
     </div>

@@ -25,9 +25,9 @@ export function TutorProfileClient({
     <>
       <button
         onClick={() => setModalOpen(true)}
-        className="inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-full bg-navy text-white text-sm font-bold hover:bg-navy-dark transition-all shadow-md hover:shadow-lg w-full sm:w-auto"
+        className="tutr-btn-student py-3 px-8 text-sm w-full sm:w-auto flex items-center justify-center gap-2"
       >
-        <Send className="w-4 h-4 text-teal" />
+        <Send className="w-4 h-4" />
         <span>Request This Tutor</span>
       </button>
 

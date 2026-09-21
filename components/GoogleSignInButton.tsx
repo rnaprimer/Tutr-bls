@@ -78,7 +78,7 @@ export function GoogleSignInButton({
         type="button"
         onClick={handleSignIn}
         disabled={loading}
-        className={`w-full flex items-center justify-center gap-3 px-6 py-3.5 rounded-full border border-navy/20 bg-white hover:bg-beige/40 text-navy font-semibold text-sm transition-all duration-200 shadow-xs hover:shadow-md active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal focus-visible:ring-offset-2 disabled:opacity-60 disabled:pointer-events-none cursor-pointer ${className}`}
+        className={`w-full flex items-center justify-center gap-3 px-6 py-3.5 rounded-full border-2 border-ink bg-white hover:bg-canvas-subtle text-ink font-bold text-sm transition-all duration-150 shadow-[2.5px_2.5px_0px_#18121E] hover:shadow-[4px_4px_0px_#18121E] hover:translate-x-[-1px] hover:translate-y-[-1px] active:translate-x-[1px] active:translate-y-[1px] active:shadow-[1.5px_1.5px_0px_#18121E] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 disabled:opacity-60 disabled:pointer-events-none cursor-pointer ${className}`}
         aria-label="Continue with Google"
       >
         {loading ? (

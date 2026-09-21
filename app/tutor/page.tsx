@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { MapPin, User } from "lucide-react";
+import { User } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { SignOutButton } from "@/components/SignOutButton";
 import {
@@ -124,24 +124,23 @@ export default async function TutorPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col justify-between bg-beige-light/40">
+    <div className="min-h-screen flex flex-col justify-between bg-canvas-lavender">
       {/* Top Portal Header */}
-      <header className="w-full bg-white/95 border-b border-navy/10 px-4 sm:px-6 lg:px-8 py-4">
+      <header className="w-full bg-white/80 backdrop-blur border-b-2 border-ink px-4 sm:px-6 lg:px-8 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <Link
             href="/"
-            className="flex items-center gap-2 text-2xl font-bold tracking-tight text-navy"
+            className="flex items-center gap-2 text-2xl font-black tracking-tight text-ink"
           >
             <span>Tutr</span>
-            <span className="inline-flex items-center gap-1 text-[11px] font-medium tracking-wide uppercase px-2 py-0.5 rounded-full bg-sky/50 text-navy-dark border border-sky">
-              <MapPin className="w-3 h-3 text-teal" />
+            <span className="font-handwritten text-base px-2.5 py-0.5 rounded-full bg-honey/30 text-ink border border-ink shadow-[1px_1px_0px_#18121E]">
               Balasore
             </span>
           </Link>
 
           <div className="flex items-center gap-4">
-            <div className="hidden sm:flex items-center gap-2 text-xs font-medium text-navy/70">
-              <User className="w-4 h-4 text-teal" />
+            <div className="hidden sm:flex items-center gap-2 text-xs font-bold text-ink/70">
+              <User className="w-4 h-4 text-warm-coral" />
               <span>{user.email}</span>
             </div>
             <SignOutButton />
@@ -162,7 +161,7 @@ export default async function TutorPage() {
       </main>
 
       {/* Footer */}
-      <footer className="text-center py-6 text-xs text-navy/50 border-t border-navy/10 bg-white/60">
+      <footer className="text-center py-6 text-xs font-bold text-ink/60 border-t-2 border-ink/20 bg-white/60">
         <p>© {new Date().getFullYear()} Tutr • Hyperlocal tutoring in Balasore, Odisha.</p>
       </footer>
     </div>

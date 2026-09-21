@@ -1,69 +1,80 @@
 import React from "react";
 import { MapPin, ShieldCheck, Zap } from "lucide-react";
+import { BuiltOnTrustBadge } from "./TutrIllustrations";
 
 export function TrustSection() {
   const pillars = [
     {
       title: "Local",
       description: "Focused on the Balasore community.",
-      subtext: "Designed specifically for students and tutors residing in Balasore, Odisha.",
-      icon: <MapPin className="w-6 h-6 text-teal" />,
-      tag: "Community First",
+      subtext: "Designed specifically for students and tutors residing right here in Balasore, Odisha.",
+      icon: <MapPin className="w-6 h-6 text-ink" />,
+      bg: "bg-[#F28F85]",
+      rotate: "rotate-[-1deg]",
     },
     {
       title: "Verified",
-      description: "Tutor applications are reviewed before profiles become publicly available.",
-      subtext: "A concept focused on trust, credibility, and student safety.",
-      icon: <ShieldCheck className="w-6 h-6 text-teal" />,
-      tag: "Quality Standard",
+      description: "Admin reviews credentials before tutor profiles go live.",
+      subtext: "Every applicant dossier is verified to maintain authentic teaching quality and peace of mind.",
+      icon: <ShieldCheck className="w-6 h-6 text-ink" />,
+      bg: "bg-[#F28F85]",
+      rotate: "rotate-[1.5deg]",
     },
     {
       title: "Simple",
-      description: "No complicated process for students or tutors.",
-      subtext: "Direct pathways without endless bureaucracy or confusing menus.",
-      icon: <Zap className="w-6 h-6 text-teal" />,
-      tag: "Frictionless",
+      description: "No complicated barriers or endless bureaucracy.",
+      subtext: "Direct subject discovery, clear monthly fees, and transparent contact unlock.",
+      icon: <Zap className="w-6 h-6 text-ink" />,
+      bg: "bg-[#FAF7F2]",
+      rotate: "rotate-[-1.5deg]",
     },
   ];
 
   return (
-    <section className="py-20 md:py-28 bg-white border-b border-navy/5">
+    <section className="py-20 md:py-28 bg-canvas-lavender border-b-2 border-ink relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-16">
-          <p className="text-xs sm:text-sm font-semibold uppercase tracking-widest text-teal mb-2">
-            Our Foundation
+          <p className="text-xs font-extrabold uppercase tracking-widest text-ink-muted mb-2 font-mono">
+            OUR FOUNDATION
           </p>
-          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-navy">
-            Built on Trust & Simplicity
+          <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-ink font-sans">
+            Our Foundation
           </h2>
-          <p className="text-base text-navy/70 mt-3">
-            Education requires trust. Here is how Tutr is designed to serve our community.
+          <p className="text-sm sm:text-base text-ink-muted mt-3 font-medium">
+            Find us as a local foundation built on trust to support learning across our community.
           </p>
         </div>
 
+        {/* 3 Pillars with floating BUILT ON TRUST badges */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {pillars.map((pillar) => (
             <div
               key={pillar.title}
-              className="p-8 rounded-2xl bg-white border border-navy/10 hover:border-teal/30 hover:shadow-sm transition-all duration-200"
+              className={`relative rounded-3xl ${pillar.bg} border-2 border-ink p-8 shadow-[4px_4px_0px_#18121E] hover:shadow-[6px_6px_0px_#18121E] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all flex flex-col justify-between ${pillar.rotate} hover:rotate-0`}
             >
-              <div className="w-12 h-12 rounded-xl bg-beige flex items-center justify-center mb-6">
-                {pillar.icon}
+              {/* Floating Built on Trust badge on top right */}
+              <div className="absolute -top-3.5 right-6 z-20">
+                <BuiltOnTrustBadge />
               </div>
 
-              <div className="inline-block px-2.5 py-0.5 rounded-full bg-sky/40 text-[11px] font-semibold text-navy-dark uppercase tracking-wider mb-3">
-                {pillar.tag}
+              <div>
+                <div className="w-14 h-14 rounded-2xl bg-white border-2 border-ink shadow-[2px_2px_0px_#18121E] flex items-center justify-center mb-6">
+                  {pillar.icon}
+                </div>
+
+                <h3 className="text-2xl font-extrabold text-ink mb-2 font-sans">
+                  {pillar.title}
+                </h3>
+
+                <p className="text-base font-bold text-ink mb-2">
+                  {pillar.description}
+                </p>
+
+                <p className="text-xs sm:text-sm text-ink/80 font-medium leading-relaxed">
+                  {pillar.subtext}
+                </p>
               </div>
-
-              <h3 className="text-xl font-bold text-navy mb-2">{pillar.title}</h3>
-
-              <p className="text-base font-medium text-navy/90 mb-2">
-                {pillar.description}
-              </p>
-
-              <p className="text-xs text-navy/60 leading-relaxed">
-                {pillar.subtext}
-              </p>
             </div>
           ))}
         </div>

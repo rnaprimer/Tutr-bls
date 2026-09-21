@@ -114,7 +114,7 @@ export function UnlockContactButton({
           }
         },
         theme: {
-          color: "#0F2A4A",
+          color: "#18121E",
         },
         modal: {
           ondismiss: () => {
@@ -143,8 +143,8 @@ export function UnlockContactButton({
 
   if (isUnlocked) {
     return (
-      <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-semibold">
-        <ShieldCheck className="w-4 h-4 text-emerald-600" />
+      <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-mint-badge/40 text-ink border-2 border-ink text-xs font-black shadow-[2px_2px_0px_#18121E]">
+        <ShieldCheck className="w-4 h-4 text-emerald-800" />
         <span>Contact Unlocked</span>
       </div>
     );
@@ -155,23 +155,23 @@ export function UnlockContactButton({
       <button
         onClick={handleUnlockPayment}
         disabled={loading}
-        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-navy text-white text-xs font-bold hover:bg-navy-dark transition-all shadow-sm hover:shadow active:scale-95 disabled:opacity-50"
+        className="tutr-btn-student py-2.5 px-5 text-xs flex items-center gap-2 disabled:opacity-50"
       >
         {loading ? (
           <>
-            <Loader2 className="w-3.5 h-3.5 animate-spin text-teal" />
+            <Loader2 className="w-3.5 h-3.5 animate-spin" />
             <span>Processing...</span>
           </>
         ) : (
           <>
-            <Lock className="w-3.5 h-3.5 text-teal" />
+            <Lock className="w-3.5 h-3.5" />
             <span>Unlock Contact — ₹{amount}</span>
           </>
         )}
       </button>
 
       {error && (
-        <p className="text-[11px] text-rose-600 flex items-center gap-1 mt-1">
+        <p className="text-[11px] text-rose-700 font-bold flex items-center gap-1 mt-1">
           <AlertCircle className="w-3 h-3" />
           <span>{error}</span>
         </p>

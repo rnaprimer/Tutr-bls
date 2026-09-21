@@ -8,7 +8,7 @@ import { Footer } from "@/components/Footer";
 
 export default function Home() {
   return (
-    <div className="min-h-screen flex flex-col justify-between bg-white selection:bg-sky selection:text-navy">
+    <div className="min-h-screen flex flex-col justify-between bg-canvas-lavender selection:bg-purple-accent selection:text-ink">
       <Navbar />
 
       <main>

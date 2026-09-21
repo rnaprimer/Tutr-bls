@@ -13,13 +13,13 @@ export function SignOutButton({
   variant = "outline",
 }: SignOutButtonProps) {
   const baseClasses =
-    "inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium rounded-full transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal cursor-pointer disabled:opacity-50";
+    "inline-flex items-center justify-center gap-2 px-4 py-2 text-xs font-bold rounded-full transition-all duration-200 focus-visible:outline-none cursor-pointer disabled:opacity-50";
 
   const variantClasses = {
     outline:
-      "border border-navy/20 text-navy hover:bg-beige/60 active:scale-[0.98]",
-    ghost: "text-navy/70 hover:text-navy hover:bg-beige/40",
-    primary: "bg-navy text-white hover:bg-navy-dark shadow-xs",
+      "border-2 border-ink bg-white text-ink hover:bg-gray-50 active:translate-x-0.5 active:translate-y-0.5 shadow-[2px_2px_0px_#18121E]",
+    ghost: "text-ink/70 hover:text-ink hover:bg-canvas-lavender",
+    primary: "border-2 border-ink bg-warm-coral text-white hover:bg-warm-coral/90 active:translate-x-0.5 active:translate-y-0.5 shadow-[2px_2px_0px_#18121E]",
   };
 
   return (
@@ -29,7 +29,7 @@ export function SignOutButton({
         className={`${baseClasses} ${variantClasses[variant]} ${className}`}
         aria-label="Sign out of Tutr"
       >
-        <LogOut className="w-4 h-4 text-teal" />
+        <LogOut className="w-3.5 h-3.5 text-ink" />
         <span>Logout</span>
       </button>
     </form>
