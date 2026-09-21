@@ -168,7 +168,8 @@ function onFormSubmit(e) {
     subjects: [],
     classes: [],
     boards: [],
-    documents: []
+    documents: [],
+    applicant_token: ""
   };
 
   // Extract from Google Form event (if present)
@@ -179,8 +180,12 @@ function onFormSubmit(e) {
       var title = items[i].getItem().getTitle().toLowerCase().trim();
       var val = items[i].getResponse();
 
+      // Check applicant token / tracking id first
+      if (title.indexOf("applicant token") !== -1 || title.indexOf("applicant id") !== -1 || title.indexOf("tutr token") !== -1 || title.indexOf("tutr id") !== -1) {
+        payload.applicant_token = String(val).trim();
+      }
       // Check document / file upload fields first (e.g. "Upload Qualification/Identity Documents")
-      if (title.indexOf("document") !== -1 || title.indexOf("upload") !== -1 || title.indexOf("certificate") !== -1 || title.indexOf("cv") !== -1 || title.indexOf("resume") !== -1) {
+      else if (title.indexOf("document") !== -1 || title.indexOf("upload") !== -1 || title.indexOf("certificate") !== -1 || title.indexOf("cv") !== -1 || title.indexOf("resume") !== -1) {
         payload.documents = extractArrayValues(val);
       }
       else if (title.indexOf("name") !== -1) payload.full_name = String(val).trim();
@@ -204,8 +209,12 @@ function onFormSubmit(e) {
       var valArr = e.namedValues[header];
       var valStr = (valArr && valArr.length > 0) ? String(valArr[0]).trim() : "";
 
+      // Check applicant token / tracking id first
+      if (hLower.indexOf("applicant token") !== -1 || hLower.indexOf("applicant id") !== -1 || hLower.indexOf("tutr token") !== -1 || hLower.indexOf("tutr id") !== -1) {
+        payload.applicant_token = valStr;
+      }
       // Check document / file upload fields first (e.g. "Upload Qualification/Identity Documents")
-      if (hLower.indexOf("document") !== -1 || hLower.indexOf("upload") !== -1 || hLower.indexOf("certificate") !== -1 || hLower.indexOf("cv") !== -1 || hLower.indexOf("resume") !== -1) {
+      else if (hLower.indexOf("document") !== -1 || hLower.indexOf("upload") !== -1 || hLower.indexOf("certificate") !== -1 || hLower.indexOf("cv") !== -1 || hLower.indexOf("resume") !== -1) {
         payload.documents = extractArrayValues(valArr);
       }
       else if (hLower.indexOf("name") !== -1) payload.full_name = valStr;

@@ -327,6 +327,88 @@ async function runValidation() {
     .select();
   assert(hijackAttempt.length === 0, "Already-linked application cannot be reassigned (anti-hijacking verified)");
 
+  console.log("\n==================================================");
+  console.log("TEST SUITE 5: Signed Applicant Token & Admin Linking");
+  console.log("==================================================");
+
+  // 9a. Test valid signed applicant token
+  const { generateApplicantToken } = await import("../lib/auth/applicant-token.ts");
+  const testTutorEmail = `token.tutor.${Date.now()}@example.com`;
+  const { data: tokenUser, error: errTokenUser } = await supabaseAdmin.auth.admin.createUser({
+    email: testTutorEmail,
+    password: "Password123!",
+    email_confirm: true,
+    user_metadata: { full_name: "Token Tutor" },
+  });
+  if (errTokenUser) throw errTokenUser;
+
+  const validToken = generateApplicantToken(tokenUser.user.id);
+  const tokenPayload = {
+    "Response ID": [`resp_token_${Date.now()}`],
+    "Full Name": ["Token Tutor Applicant"],
+    "Email Address": ["submitted.email.different@example.com"], // Different from auth email
+    "Applicant Token": [validToken],
+    "Educational Qualification": ["M.Phil Physics"],
+    "Teaching Experience": ["4 years"],
+  };
+
+  const tokenRes = await sendWebhook(tokenPayload);
+  assert(tokenRes.statusCode === 201, "Submission with valid signed token returns HTTP 201 Created");
+  const tokenAppId = tokenRes.body.application_id;
+
+  const { data: tokenAppInDb } = await supabaseAdmin
+    .from("tutor_applications")
+    .select("user_id, email, full_name")
+    .eq("id", tokenAppId)
+    .single();
+
+  assert(tokenAppInDb.user_id === tokenUser.user.id, "Authoritative user_id linked via signed token (not submitted email)");
+  assert(tokenAppInDb.email === "submitted.email.different@example.com", "Contact email stored separately without overriding identity");
+
+  // 9b. Test tampered applicant token (State C: MUST REJECT)
+  const tamperedToken = validToken.slice(0, -4) + "abcd";
+  const tamperedPayload = {
+    "Response ID": [`resp_tampered_${Date.now()}`],
+    "Full Name": ["Sneaky Malicious Applicant"],
+    "Email Address": ["sneaky@example.com"],
+    "Applicant Token": [tamperedToken],
+  };
+
+  const tamperedRes = await sendWebhook(tamperedPayload);
+  assert(tamperedRes.statusCode === 400, "Tampered applicant token is REJECTED with HTTP 400 (not silently matched to email)");
+  assert(tamperedRes.body.error && tamperedRes.body.error.includes("Security Validation Error"), "Error message informs of security validation rejection");
+
+  // 9c. Test Admin Manual Linking Function
+  // Create an unlinked application
+  const unlinkedEmail = `unlinked.app.${Date.now()}@example.com`;
+  const unlinkedRes = await sendWebhook({
+    google_response_id: `resp_unlinked_${Date.now()}`,
+    full_name: "Unlinked Applicant",
+    email: unlinkedEmail,
+  });
+  const unlinkedAppId = unlinkedRes.body.application_id;
+
+  // Admin calls admin_link_tutor_application_user
+  const { data: linkResult, error: linkError } = await supabaseAdmin.rpc("admin_link_tutor_application_user", {
+    p_application_id: unlinkedAppId,
+    p_target_user_id: tokenUser.user.id,
+  });
+  assert(!linkError && linkResult.success === true, "Admin successfully links unlinked application to target Tutr user");
+
+  const { data: linkedAppInDb } = await supabaseAdmin
+    .from("tutor_applications")
+    .select("user_id")
+    .eq("id", unlinkedAppId)
+    .single();
+  assert(linkedAppInDb.user_id === tokenUser.user.id, "Database confirms application is linked to target user");
+
+  // 9d. Anti-hijacking on Admin Linking: cannot reassign if already linked to a different user
+  const { error: hijackErr } = await supabaseAdmin.rpc("admin_link_tutor_application_user", {
+    p_application_id: unlinkedAppId,
+    p_target_user_id: user1.user.id, // Attempting to steal application to user1
+  });
+  assert(Boolean(hijackErr), "Admin linking rejects reassigning an application already linked to a different user");
+
   // Clean up test records
   await supabaseAdmin.from("tutor_applications").delete().in("id", [
     sheetAppId,
@@ -334,10 +416,13 @@ async function runValidation() {
     urlInQualRes.body.application_id,
     existingRes.body.application_id,
     delayedAppId,
+    tokenAppId,
+    unlinkedAppId,
   ]);
   await supabaseAdmin.auth.admin.deleteUser(user1.user.id);
   await supabaseAdmin.auth.admin.deleteUser(user2.user.id);
   await supabaseAdmin.auth.admin.deleteUser(imposterUser.user.id);
+  await supabaseAdmin.auth.admin.deleteUser(tokenUser.user.id);
 
   console.log("\n==================================================");
   console.log(`TOTAL PHASE 4B TESTS: ${testsRun}`);

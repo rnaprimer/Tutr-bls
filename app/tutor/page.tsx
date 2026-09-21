@@ -8,6 +8,7 @@ import {
   TutorApplicationStatus,
   type SanitizedTutorApplication,
 } from "@/components/tutor/TutorApplicationStatus";
+import { generateApplicantToken } from "@/lib/auth/applicant-token";
 
 export const metadata = {
   title: "Tutor Portal — Tutr Balasore",
@@ -105,7 +106,22 @@ export default async function TutorPage() {
     }
   }
 
-  const formUrl = process.env.NEXT_PUBLIC_TUTOR_APPLICATION_FORM_URL;
+  const baseFormUrl = process.env.NEXT_PUBLIC_TUTOR_APPLICATION_FORM_URL;
+  let formUrl = baseFormUrl;
+
+  // If a form URL is configured, attach fresh signed applicant token
+  if (baseFormUrl && user?.id) {
+    try {
+      const applicantToken = generateApplicantToken(user.id);
+      // Support customizable entry ID via env, or standard parameter 'tutr_token'
+      const entryParam = process.env.NEXT_PUBLIC_TUTOR_FORM_TOKEN_ENTRY || "tutr_token";
+      const separator = baseFormUrl.includes("?") ? "&" : "?";
+      formUrl = `${baseFormUrl}${separator}${encodeURIComponent(entryParam)}=${encodeURIComponent(applicantToken)}`;
+    } catch (err) {
+      console.error("[Applicant Token Error]", err);
+      formUrl = baseFormUrl;
+    }
+  }
 
   return (
     <div className="min-h-screen flex flex-col justify-between bg-beige-light/40">

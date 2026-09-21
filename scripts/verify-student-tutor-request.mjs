@@ -43,11 +43,32 @@ async function runVerification() {
   const createdRequestIds = [];
 
   try {
-    // 1. Get tutor "dev" and reference subject/class
+    // 1. Provision dynamic test tutor and reference subject/class
+    const tutorEmail = `tutor.test.${timestamp}@example.com`;
+    const { data: authTutor, error: errT } = await supabaseAdmin.auth.admin.createUser({
+      email: tutorEmail,
+      password,
+      email_confirm: true,
+      user_metadata: { full_name: "Test Tutor Dev" },
+    });
+    if (errT) throw errT;
+    const tutorUserId = authTutor.user.id;
+    createdAuthUserIds.push(tutorUserId);
+
+    await supabaseAdmin.from("users").update({ role: "TUTOR" }).eq("id", tutorUserId);
+
     const { data: tutorDev, error: tutorErr } = await supabaseAdmin
       .from("tutor_profiles")
+      .insert({
+        user_id: tutorUserId,
+        display_name: "Test Tutor Dev",
+        is_verified: true,
+        is_active: true,
+        qualification: "M.Sc Physics",
+        locality: "Sahadevkhunta",
+        fee: "500",
+      })
       .select("id, user_id, display_name, is_verified")
-      .eq("id", "ece1344d-6974-4f1a-a819-777092e9a5ad")
       .single();
 
     assert(!tutorErr && Boolean(tutorDev), "Tutor 'dev' exists and is verified");
@@ -232,6 +253,7 @@ async function runVerification() {
     for (const reqId of createdRequestIds) {
       await supabaseAdmin.from("tutor_requests").delete().eq("id", reqId);
     }
+    await supabaseAdmin.from("tutor_profiles").delete().in("user_id", createdAuthUserIds);
     for (const userId of createdAuthUserIds) {
       await supabaseAdmin.from("students").delete().eq("user_id", userId);
       await supabaseAdmin.from("users").delete().eq("id", userId);

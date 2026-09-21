@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import crypto from "crypto";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { verifyApplicantToken } from "@/lib/auth/applicant-token";
 
 const MAX_PAYLOAD_BYTES = 50 * 1024; // 50 KB
 const EMAIL_REGEX = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
@@ -282,6 +283,47 @@ export async function POST(request: NextRequest) {
     extractString(payload["Availability"])
   )?.slice(0, 500);
 
+  // Applicant Identity Token Handling (Three-state model)
+  // State A: No token present -> Legacy submission. Ingestion falls back to email matching.
+  // State B: Token present and valid -> Verified UUID passed. Authoritative identity.
+  // State C: Token present but invalid/expired/tampered -> REJECT. Do not silently fallback to email.
+  let rawToken =
+    extractString(payload.applicant_token) ||
+    extractString(payload.user_token) ||
+    extractString(payload.tutr_token) ||
+    extractString(payload["Applicant Token"]) ||
+    extractString(payload["Tutr Token"]) ||
+    extractString(payload["Tutr Applicant ID"]) ||
+    extractString(payload["User ID"]);
+
+  if (!rawToken) {
+    for (const key of Object.keys(payload)) {
+      const lk = key.toLowerCase().trim();
+      if (lk.includes("token") || (lk.includes("applicant") && lk.includes("id"))) {
+        rawToken = extractString(payload[key]);
+        if (rawToken) break;
+      }
+    }
+  }
+
+  let verifiedUserId: string | null = null;
+  if (rawToken) {
+    const verification = verifyApplicantToken(rawToken);
+    if (!verification.isValid) {
+      console.warn(
+        `[Webhook Security Guard] Rejected application submission with invalid applicant token. Reason: ${verification.errorReason}. ResponseId: ${googleResponseId}`
+      );
+      return NextResponse.json(
+        {
+          error:
+            "Security Validation Error: The provided applicant authentication token is invalid or has expired. Please launch the application form directly from your logged-in Tutr account.",
+        },
+        { status: 400 }
+      );
+    }
+    verifiedUserId = verification.userId;
+  }
+
   // Normalized arrays (supports array or comma-separated string)
   const subjects = normalizeArray(payload.subjects || payload["Subjects Taught"] || payload["Subjects"]);
   const classes = normalizeArray(payload.classes || payload["Target Classes"] || payload["Classes"]);
@@ -294,7 +336,7 @@ export async function POST(request: NextRequest) {
   try {
     const supabaseAdmin = createAdminClient();
 
-    // Call privileged stored procedure
+    // Call privileged stored procedure (14 parameters)
     const { data, error } = await supabaseAdmin.rpc("ingest_google_form_application", {
       p_google_response_id: googleResponseId,
       p_full_name: fullName,
@@ -309,6 +351,7 @@ export async function POST(request: NextRequest) {
       p_classes: classes,
       p_boards: boards,
       p_documents: documents,
+      p_user_id: verifiedUserId || undefined,
     });
 
     if (error) {

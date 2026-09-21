@@ -161,3 +161,76 @@ export async function rejectApplication(
     message: "Application rejected.",
   };
 }
+
+/**
+ * Server Action: Search registered Tutr users for manual application linking.
+ */
+export async function searchTutrUsers(query: string) {
+  const { isAuthenticated, isAdmin } = await verifyAdminSession();
+  if (!isAuthenticated || !isAdmin) {
+    return { success: false, error: "Unauthorized: Admin privileges required.", users: [] };
+  }
+
+  const trimmed = query.trim();
+  if (!trimmed || trimmed.length < 2) {
+    return { success: true, users: [] };
+  }
+
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("users")
+    .select("id, email, full_name, role")
+    .or(`email.ilike.%${trimmed}%,full_name.ilike.%${trimmed}%`)
+    .limit(10);
+
+  if (error) {
+    return { success: false, error: error.message, users: [] };
+  }
+
+  return { success: true, users: data || [] };
+}
+
+/**
+ * Server Action: Manually link an unlinked tutor application to a registered user account.
+ */
+export async function linkApplicationUser(
+  applicationId: string,
+  targetUserId: string
+): Promise<ActionResponse> {
+  const { isAuthenticated, isAdmin } = await verifyAdminSession();
+  if (!isAuthenticated || !isAdmin) {
+    return {
+      success: false,
+      error: "Unauthorized: Administrator privileges are required.",
+    };
+  }
+
+  if (!applicationId || !targetUserId) {
+    return {
+      success: false,
+      error: "Both applicationId and targetUserId are required.",
+    };
+  }
+
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("admin_link_tutor_application_user", {
+    p_application_id: applicationId,
+    p_target_user_id: targetUserId,
+  });
+
+  if (error) {
+    return {
+      success: false,
+      error: error.message || "Failed to link applicant account.",
+    };
+  }
+
+  revalidatePath("/admin/applications");
+  revalidatePath(`/admin/applications/${applicationId}`);
+
+  return {
+    success: true,
+    message: `Application linked to ${(data as { linked_user_email?: string })?.linked_user_email || targetUserId}.`,
+  };
+}
+

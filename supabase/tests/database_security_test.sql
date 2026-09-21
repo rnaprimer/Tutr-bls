@@ -453,10 +453,15 @@ BEGIN
         (app_tutor_d_id, uid_tutor_d, 'Deepa Approved',   'tutor_d@tutr.local', 'APPROVED', NULL)
     ON CONFLICT (id) DO NOTHING;
 
-    INSERT INTO public.tutor_profiles (id, user_id, application_id, display_name, fee, is_verified)
+    INSERT INTO public.tutor_profiles (id, user_id, application_id, display_name, fee, is_verified, is_active)
     VALUES
-        (prof_tutor_d_id, uid_tutor_d, app_tutor_d_id, 'Deepa Approved', '700/hr', true)
-    ON CONFLICT (id) DO NOTHING;
+        (prof_tutor_d_id, uid_tutor_d, app_tutor_d_id, 'Deepa Approved', '700/hr', true, true)
+    ON CONFLICT (id) DO UPDATE SET is_active = true;
+
+    INSERT INTO public.tutor_onboarding_payments (application_id, tutor_profile_id, user_id, amount, status, paid_at)
+    VALUES
+        (app_tutor_d_id, prof_tutor_d_id, uid_tutor_d, 149, 'PAID', clock_timestamp())
+    ON CONFLICT DO NOTHING;
 
     BEGIN
         -- Switch to ANONYMOUS

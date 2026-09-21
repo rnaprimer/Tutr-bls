@@ -268,6 +268,7 @@ export default async function ApplicationDetailPage({
         <ApplicationReviewActions
           applicationId={application.id}
           status={application.status}
+          userId={application.user_id}
           rejectionReason={application.rejection_reason}
         />
 

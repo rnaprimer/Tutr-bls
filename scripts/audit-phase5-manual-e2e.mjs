@@ -184,6 +184,7 @@ async function runAudit() {
         availability: "Mon, Wed, Fri (4:00 PM - 6:00 PM)",
         bio: "Specialist in CBSE and BSE Odisha Class 9 & 10 Mathematics board exam preparation.",
         is_verified: true,
+        is_active: true,
       })
       .select("id")
       .single();

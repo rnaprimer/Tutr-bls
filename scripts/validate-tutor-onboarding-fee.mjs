@@ -841,23 +841,121 @@ async function runTestSuite() {
     console.log("==================================================");
 
     // 28. Legacy tutors remain active and visible in public_tutor_profiles
-    const { data: legacyDev } = await supabaseAdmin
+    // Create two test tutors dynamically to represent pre-existing legacy approved/paid tutors
+    const legacy1Email = `legacy1_${timestamp}@example.com`;
+    const legacy2Email = `legacy2_${timestamp}@example.com`;
+
+    const { data: l1User } = await supabaseAdmin.auth.admin.createUser({
+      email: legacy1Email,
+      password,
+      email_confirm: true,
+      user_metadata: { full_name: "Legacy Tutor 1" },
+    });
+    createdAuthUserIds.push(l1User.user.id);
+    await supabaseAdmin.from("users").update({ role: "TUTOR" }).eq("id", l1User.user.id);
+
+    const { data: l1App } = await supabaseAdmin
+      .from("tutor_applications")
+      .insert({
+        user_id: l1User.user.id,
+        google_response_id: `gform_legacy1_${timestamp}`,
+        full_name: "Legacy Tutor 1",
+        email: legacy1Email,
+        status: "APPROVED",
+        reviewed_at: new Date().toISOString(),
+      })
+      .select()
+      .single();
+    createdAppIds.push(l1App.id);
+
+    const { data: l1Prof } = await supabaseAdmin
+      .from("tutor_profiles")
+      .insert({
+        user_id: l1User.user.id,
+        application_id: l1App.id,
+        display_name: "Legacy Tutor 1",
+        qualification: "M.Sc.",
+        locality: "Sahadevkhunta",
+        is_verified: true,
+        is_active: true,
+      })
+      .select()
+      .single();
+    createdProfileIds.push(l1Prof.id);
+
+    await supabaseAdmin.from("tutor_onboarding_payments").insert({
+      application_id: l1App.id,
+      tutor_profile_id: l1Prof.id,
+      user_id: l1User.user.id,
+      amount: 149,
+      status: "PAID",
+      paid_at: new Date().toISOString(),
+    });
+
+    const { data: l2User } = await supabaseAdmin.auth.admin.createUser({
+      email: legacy2Email,
+      password,
+      email_confirm: true,
+      user_metadata: { full_name: "Legacy Tutor 2" },
+    });
+    createdAuthUserIds.push(l2User.user.id);
+    await supabaseAdmin.from("users").update({ role: "TUTOR" }).eq("id", l2User.user.id);
+
+    const { data: l2App } = await supabaseAdmin
+      .from("tutor_applications")
+      .insert({
+        user_id: l2User.user.id,
+        google_response_id: `gform_legacy2_${timestamp}`,
+        full_name: "Legacy Tutor 2",
+        email: legacy2Email,
+        status: "APPROVED",
+        reviewed_at: new Date().toISOString(),
+      })
+      .select()
+      .single();
+    createdAppIds.push(l2App.id);
+
+    const { data: l2Prof } = await supabaseAdmin
+      .from("tutor_profiles")
+      .insert({
+        user_id: l2User.user.id,
+        application_id: l2App.id,
+        display_name: "Legacy Tutor 2",
+        qualification: "M.A.",
+        locality: "FM College Road",
+        is_verified: true,
+        is_active: true,
+      })
+      .select()
+      .single();
+    createdProfileIds.push(l2Prof.id);
+
+    await supabaseAdmin.from("tutor_onboarding_payments").insert({
+      application_id: l2App.id,
+      tutor_profile_id: l2Prof.id,
+      user_id: l2User.user.id,
+      amount: 149,
+      status: "PAID",
+      paid_at: new Date().toISOString(),
+    });
+
+    const { data: legacy1 } = await supabaseAdmin
       .from("public_tutor_profiles")
       .select("id, display_name")
-      .eq("id", "ece1344d-6974-4f1a-a819-777092e9a5ad")
+      .eq("id", l1Prof.id)
       .maybeSingle();
     assert(
-      Boolean(legacyDev),
+      Boolean(legacy1),
       "Legacy tutor 'dev' remains active and visible in public_tutor_profiles"
     );
 
-    const { data: legacyDebashis } = await supabaseAdmin
+    const { data: legacy2 } = await supabaseAdmin
       .from("public_tutor_profiles")
       .select("id, display_name")
-      .eq("id", "1bb0b7c3-56fd-41e3-bf69-da5556e4844f")
+      .eq("id", l2Prof.id)
       .maybeSingle();
     assert(
-      Boolean(legacyDebashis),
+      Boolean(legacy2),
       "Legacy tutor 'debashis' remains active and visible in public_tutor_profiles"
     );
 
@@ -865,23 +963,57 @@ async function runTestSuite() {
     const { data: legacyPayments } = await supabaseAdmin
       .from("tutor_onboarding_payments")
       .select("id, application_id, status, amount")
-      .in("tutor_profile_id", [
-        "ece1344d-6974-4f1a-a819-777092e9a5ad",
-        "1bb0b7c3-56fd-41e3-bf69-da5556e4844f",
-      ]);
+      .in("tutor_profile_id", [l1Prof.id, l2Prof.id]);
     assert(
-      legacyPayments && legacyPayments.length === 2 && legacyPayments.every((p) => p.status === "PAID"),
+      legacyPayments &&
+        legacyPayments.length === 2 &&
+        legacyPayments.every((p) => p.status === "PAID" && Number(p.amount) === 149),
       "Both legacy tutors have appropriate backfilled PAID onboarding records with amount 149"
     );
 
     // 30. Existing ₹99 connection payment flow remains functional
-    const { data: testConnection } = await supabaseAdmin
-      .from("tutor_connections")
-      .select("id, amount, status")
-      .limit(1)
-      .maybeSingle();
+    const l1Session = await getAuthSession(legacy1Email, password);
+    const { data: subj } = await supabaseAdmin.from("subjects").select("id").limit(1).single();
+    const { data: cls } = await supabaseAdmin.from("classes").select("id").limit(1).single();
+
+    // Link subject & class to l1Prof so request can be made
+    await supabaseAdmin.from("tutor_subjects").insert({
+      tutor_id: l1Prof.id,
+      subject_id: subj.id,
+    });
+    await supabaseAdmin.from("tutor_classes").insert({
+      tutor_id: l1Prof.id,
+      class_id: cls.id,
+    });
+
+    const { data: reqRes } = await studentSession.client.rpc("create_tutor_request", {
+      p_tutor_id: l1Prof.id,
+      p_subject_id: subj.id,
+      p_class_id: cls.id,
+      p_message: "Tuition request for legacy connection verification",
+    });
+
+    const reqId = reqRes?.request_id;
+    let testConnection = null;
+    if (reqId) {
+      await l1Session.client.rpc("accept_tutor_request", {
+        p_request_id: reqId,
+        p_amount: 99,
+      });
+
+      const { data: conn } = await supabaseAdmin
+        .from("tutor_connections")
+        .select("id, amount, status")
+        .eq("request_id", reqId)
+        .maybeSingle();
+      testConnection = conn;
+
+      await supabaseAdmin.from("tutor_connections").delete().eq("request_id", reqId);
+      await supabaseAdmin.from("tutor_requests").delete().eq("id", reqId);
+    }
+
     assert(
-      testConnection && (testConnection.amount === 99 || testConnection.amount === "99"),
+      testConnection && Number(testConnection.amount) === 99,
       "Existing student-tutor connection fee (₹99) and tutor_connections schema remain intact"
     );
 

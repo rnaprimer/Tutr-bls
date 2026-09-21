@@ -765,6 +765,13 @@ export type Database = {
         Args: { p_connection_id: string }
         Returns: Json
       }
+      admin_link_tutor_application_user: {
+        Args: {
+          p_application_id: string
+          p_target_user_id: string
+        }
+        Returns: Json
+      }
       ingest_google_form_application: {
         Args: {
           p_availability?: string
@@ -780,6 +787,7 @@ export type Database = {
           p_phone?: string
           p_qualification?: string
           p_subjects?: Json
+          p_user_id?: string
         }
         Returns: Json
       }

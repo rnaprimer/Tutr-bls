@@ -14,27 +14,74 @@ import {
   startApplicationReview,
   approveApplication,
   rejectApplication,
+  searchTutrUsers,
+  linkApplicationUser,
 } from "../actions";
+import { Link2, Search, UserCheck } from "lucide-react";
 
 interface ApplicationReviewActionsProps {
   applicationId: string;
   status: "PENDING" | "UNDER_REVIEW" | "APPROVED" | "REJECTED";
+  userId?: string | null;
   rejectionReason?: string | null;
 }
 
 export function ApplicationReviewActions({
   applicationId,
   status,
+  userId,
   rejectionReason,
 }: ApplicationReviewActionsProps) {
   const [isPending, startTransition] = useTransition();
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
+  // Link user modal states
+  const [showLinkModal, setShowLinkModal] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<Array<{ id: string; email: string; full_name: string }>>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<{ id: string; email: string; full_name: string } | null>(null);
+
   // Modal states
   const [showApproveModal, setShowApproveModal] = useState(false);
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [reasonText, setReasonText] = useState("");
+
+  const handleSearchUsers = async (q: string) => {
+    setSearchQuery(q);
+    if (q.trim().length < 2) {
+      setSearchResults([]);
+      return;
+    }
+    setIsSearching(true);
+    try {
+      const res = await searchTutrUsers(q);
+      if (res.success && res.users) {
+        setSearchResults(res.users as Array<{ id: string; email: string; full_name: string }>);
+      }
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  const handleLinkUser = () => {
+    if (!selectedUser) {
+      setErrorMsg("Please select a registered Tutr user account to link.");
+      return;
+    }
+    setErrorMsg(null);
+    setSuccessMsg(null);
+    startTransition(async () => {
+      const res = await linkApplicationUser(applicationId, selectedUser.id);
+      setShowLinkModal(false);
+      if (res.success) {
+        setSuccessMsg(res.message || "User account successfully linked!");
+      } else {
+        setErrorMsg(res.error || "Failed to link user account.");
+      }
+    });
+  };
 
   const handleStartReview = () => {
     setErrorMsg(null);
@@ -178,6 +225,30 @@ export function ApplicationReviewActions({
                 Approving will atomically provision a verified tutor profile on the public marketplace.
               </p>
             </div>
+
+            {!userId && (
+              <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-amber-900">
+                <div className="flex items-start gap-2">
+                  <AlertTriangle className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-bold">Applicant Not Linked to a Tutr User Account</p>
+                    <p className="text-amber-800">
+                      Approval requires an authenticated Tutr user account. You can link this application to an existing registered user.
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => {
+                    setErrorMsg(null);
+                    setShowLinkModal(true);
+                  }}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-amber-600 hover:bg-amber-700 text-white font-semibold text-xs transition-colors flex-shrink-0"
+                >
+                  <Link2 className="w-3.5 h-3.5" />
+                  <span>Link User Account</span>
+                </button>
+              </div>
+            )}
 
             <div className="flex flex-col sm:flex-row items-center gap-3">
               <button
@@ -338,6 +409,107 @@ export function ApplicationReviewActions({
                   </>
                 ) : (
                   <span>Confirm Rejection</span>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Link User Modal */}
+      {showLinkModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-navy/50 p-4 backdrop-blur-xs">
+          <div className="max-w-md w-full bg-white rounded-3xl p-6 sm:p-8 shadow-xl border border-navy/10 animate-in fade-in zoom-in-95">
+            <div className="w-12 h-12 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600 mb-4">
+              <Link2 className="w-6 h-6" />
+            </div>
+
+            <h3 className="text-xl font-bold text-navy mb-2">Link Tutr User Account</h3>
+            <p className="text-xs text-navy/70 mb-4 leading-relaxed">
+              Search for the registered Tutr user account (by email or full name) to associate with this application.
+            </p>
+
+            <div className="mb-4">
+              <label htmlFor="userSearch" className="block text-xs font-semibold text-navy mb-1.5">
+                Search Registered Users
+              </label>
+              <div className="relative">
+                <input
+                  id="userSearch"
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => handleSearchUsers(e.target.value)}
+                  placeholder="Type email (e.g. surajbasa...) or name"
+                  className="w-full rounded-2xl border border-navy/20 pl-9 pr-4 py-2.5 text-xs text-navy focus:outline-none focus:ring-2 focus:ring-amber-400"
+                />
+                <Search className="w-4 h-4 text-navy/40 absolute left-3 top-3" />
+                {isSearching && (
+                  <Loader2 className="w-3.5 h-3.5 text-amber-600 animate-spin absolute right-3 top-3" />
+                )}
+              </div>
+            </div>
+
+            {/* Results List */}
+            {searchResults.length > 0 && (
+              <div className="mb-4 max-h-48 overflow-y-auto space-y-2 pr-1">
+                {searchResults.map((u) => {
+                  const isSelected = selectedUser?.id === u.id;
+                  return (
+                    <button
+                      key={u.id}
+                      type="button"
+                      onClick={() => setSelectedUser(u)}
+                      className={`w-full text-left p-3 rounded-xl border text-xs transition-all flex items-center justify-between ${
+                        isSelected
+                          ? "bg-amber-50 border-amber-400 text-amber-950 font-medium shadow-xs"
+                          : "bg-beige-light/40 border-navy/10 text-navy hover:bg-beige-light"
+                      }`}
+                    >
+                      <div className="min-w-0 pr-2">
+                        <p className="font-bold truncate">{u.full_name || "Unnamed User"}</p>
+                        <p className="text-[11px] text-navy/60 font-mono truncate">{u.email}</p>
+                      </div>
+                      {isSelected && <UserCheck className="w-4 h-4 text-amber-600 flex-shrink-0" />}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+
+            {selectedUser && (
+              <div className="mb-4 p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900">
+                <span className="font-bold">Selected Account: </span>
+                <span>{selectedUser.full_name} ({selectedUser.email})</span>
+              </div>
+            )}
+
+            <div className="flex items-center justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowLinkModal(false);
+                  setSelectedUser(null);
+                  setSearchQuery("");
+                  setSearchResults([]);
+                }}
+                disabled={isPending}
+                className="px-5 py-2 rounded-full border border-navy/20 hover:bg-beige/40 text-navy text-xs font-semibold transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleLinkUser}
+                disabled={isPending || !selectedUser}
+                className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold transition-colors shadow-sm disabled:opacity-50"
+              >
+                {isPending ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <span>Linking...</span>
+                  </>
+                ) : (
+                  <span>Confirm Link</span>
                 )}
               </button>
             </div>
