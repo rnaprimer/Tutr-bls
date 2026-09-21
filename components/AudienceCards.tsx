@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import { Button } from "./Button";
 
@@ -24,14 +25,20 @@ export function AudienceCards() {
             <div>
               {/* Illustrated Header Art: Student & books */}
               <div className="flex items-center gap-4 mb-6">
-                <div className="w-16 h-16 rounded-2xl bg-honey-light border-2 border-ink shadow-[2px_2px_0px_#18121E] flex items-center justify-center text-3xl">
-                  🎒
+                <div className="w-16 h-16 rounded-2xl bg-honey-light border-2 border-ink shadow-[2px_2px_0px_#18121E] flex items-center justify-center overflow-hidden">
+                  <Image
+                    src="/characters/character-02.png"
+                    alt="Tutr student illustration"
+                    width={64}
+                    height={64}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
                 <div className="w-14 h-14 rounded-2xl bg-[#FCECE9] border-2 border-ink shadow-[2px_2px_0px_#18121E] flex items-center justify-center text-2xl">
                   📚
                 </div>
                 <div className="w-12 h-12 rounded-full bg-white border-2 border-ink shadow-[2px_2px_0px_#18121E] flex items-center justify-center text-xl">
-                  🍎
+                  🎒
                 </div>
               </div>
 
@@ -84,8 +91,14 @@ export function AudienceCards() {
             <div>
               {/* Illustrated Header Art: Teacher & lightbulb */}
               <div className="flex items-center gap-4 mb-6">
-                <div className="w-16 h-16 rounded-2xl bg-purple-light border-2 border-ink shadow-[2px_2px_0px_#18121E] flex items-center justify-center text-3xl">
-                  👨‍🏫
+                <div className="w-16 h-16 rounded-2xl bg-purple-light border-2 border-ink shadow-[2px_2px_0px_#18121E] flex items-center justify-center overflow-hidden">
+                  <Image
+                    src="/characters/character-03.png"
+                    alt="Tutr teacher illustration"
+                    width={64}
+                    height={64}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
                 <div className="w-14 h-14 rounded-2xl bg-[#FCECE9] border-2 border-ink shadow-[2px_2px_0px_#18121E] flex items-center justify-center text-2xl">
                   💡

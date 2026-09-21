@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 
 /**
  * Hand-drawn book mascot for Tutr brand
@@ -81,7 +82,7 @@ export function DoodleCurvedArrow({ className = "w-12 h-12" }: { className?: str
 }
 
 /**
- * Hero Left Illustration: Framed card with tutor man and dog in chair
+ * Hero Left Illustration: Framed card with tutor man and educator character
  */
 export function HeroLeftIllustration({ className = "w-56" }: { className?: string }) {
   return (
@@ -94,47 +95,27 @@ export function HeroLeftIllustration({ className = "w-56" }: { className?: strin
       {/* Main card */}
       <div className="bg-[#FAF7F2] border-2 border-ink rounded-3xl p-3 shadow-[4px_4px_0px_#18121E] rotate-[-2deg]">
         <div className="bg-[#FCECE9] border border-ink/20 rounded-2xl p-4 flex flex-col items-center gap-3">
-          {/* Upper portrait: bearded tutor */}
+          {/* Upper portrait: Character 01 (bearded tutor with glasses) */}
           <div className="w-20 h-20 rounded-full bg-white border-2 border-ink flex items-center justify-center overflow-hidden shadow-[2px_2px_0px_#18121E]">
-            <svg viewBox="0 0 100 100" className="w-full h-full">
-              {/* Hair & head */}
-              <circle cx="50" cy="40" r="22" fill="#FAF7F2" stroke="#18121E" strokeWidth="2.5" />
-              <path d="M30 36C30 20 40 16 50 16C60 16 70 20 70 36C70 30 64 26 50 26C36 26 30 30 30 36Z" fill="#18121E" />
-              {/* Beard */}
-              <path d="M36 44C36 56 42 64 50 64C58 64 64 56 64 44C60 48 56 50 50 50C44 50 40 48 36 44Z" fill="#18121E" />
-              {/* Eyes & smile */}
-              <circle cx="43" cy="38" r="2.5" fill="#18121E" />
-              <circle cx="57" cy="38" r="2.5" fill="#18121E" />
-              <path d="M47 46C49 48 51 48 53 46" stroke="#FAF7F2" strokeWidth="2" strokeLinecap="round" />
-              {/* Glasses */}
-              <circle cx="43" cy="38" r="6" fill="none" stroke="#18121E" strokeWidth="2" />
-              <circle cx="57" cy="38" r="6" fill="none" stroke="#18121E" strokeWidth="2" />
-              <path d="M49 38H51" stroke="#18121E" strokeWidth="2" />
-              {/* Body */}
-              <path d="M22 92C24 72 36 68 50 68C64 68 76 72 78 92" fill="#F6BD75" stroke="#18121E" strokeWidth="2.5" />
-            </svg>
+            <Image
+              src="/characters/character-01.png"
+              alt="Tutr character - tutor with glasses"
+              width={80}
+              height={80}
+              className="w-full h-full object-cover"
+              priority
+            />
           </div>
 
-          {/* Lower portrait: cozy dog in chair */}
-          <div className="w-28 h-24 rounded-2xl bg-white border-2 border-ink flex items-center justify-center p-2 relative shadow-[2px_2px_0px_#18121E]">
-            <svg viewBox="0 0 100 80" className="w-full h-full">
-              {/* Armchair back */}
-              <path d="M15 70V28C15 20 22 14 30 14H70C78 14 85 20 85 28V70" fill="#F28F85" stroke="#18121E" strokeWidth="2.5" />
-              {/* Dog head */}
-              <ellipse cx="50" cy="38" rx="16" ry="14" fill="#FAF7F2" stroke="#18121E" strokeWidth="2.5" />
-              {/* Dog ears */}
-              <path d="M36 30L30 14L40 24" fill="#18121E" stroke="#18121E" strokeWidth="2" strokeLinejoin="round" />
-              <path d="M64 30L70 14L60 24" fill="#18121E" stroke="#18121E" strokeWidth="2" strokeLinejoin="round" />
-              {/* Dog face */}
-              <circle cx="45" cy="36" r="2" fill="#18121E" />
-              <circle cx="55" cy="36" r="2" fill="#18121E" />
-              <ellipse cx="50" cy="42" rx="3.5" ry="2.5" fill="#18121E" />
-              {/* Snug sweater */}
-              <path d="M30 68C32 50 40 48 50 48C60 48 68 50 70 68" fill="#FAF7F2" stroke="#18121E" strokeWidth="2" />
-              {/* Stripes on sweater */}
-              <path d="M35 56H65" stroke="#18121E" strokeWidth="1.5" strokeDasharray="2 2" />
-              <path d="M38 62H62" stroke="#18121E" strokeWidth="1.5" strokeDasharray="2 2" />
-            </svg>
+          {/* Lower portrait: Character 03 (young professional educator) */}
+          <div className="w-28 h-24 rounded-2xl bg-white border-2 border-ink flex items-center justify-center p-1 relative overflow-hidden shadow-[2px_2px_0px_#18121E]">
+            <Image
+              src="/characters/character-03.png"
+              alt="Tutr character - educator"
+              width={112}
+              height={96}
+              className="w-full h-full object-contain"
+            />
           </div>
         </div>
       </div>
@@ -148,7 +129,7 @@ export function HeroLeftIllustration({ className = "w-56" }: { className?: strin
 }
 
 /**
- * Hero Right Illustration: Framed card with teacher and student girl
+ * Hero Right Illustration: Framed card with cheerful child and student girl
  */
 export function HeroRightIllustration({ className = "w-56" }: { className?: string }) {
   return (
@@ -161,51 +142,27 @@ export function HeroRightIllustration({ className = "w-56" }: { className?: stri
       {/* Main card */}
       <div className="bg-[#FAF7F2] border-2 border-ink rounded-3xl p-3 shadow-[4px_4px_0px_#18121E] rotate-[2deg]">
         <div className="bg-[#FCECE9] border border-ink/20 rounded-2xl p-4 flex flex-col items-center gap-3">
-          {/* Upper portrait: smiling senior teacher & child */}
-          <div className="w-28 h-20 rounded-2xl bg-white border-2 border-ink flex items-center justify-center p-1.5 shadow-[2px_2px_0px_#18121E]">
-            <svg viewBox="0 0 100 65" className="w-full h-full">
-              {/* Grandpa teacher */}
-              <circle cx="36" cy="28" r="14" fill="#FAF7F2" stroke="#18121E" strokeWidth="2" />
-              <path d="M24 24C24 16 30 14 36 14C42 14 48 16 48 24" stroke="#18121E" strokeWidth="2" fill="none" />
-              <circle cx="32" cy="27" r="1.5" fill="#18121E" />
-              <circle cx="40" cy="27" r="1.5" fill="#18121E" />
-              <circle cx="32" cy="27" r="4" fill="none" stroke="#18121E" strokeWidth="1.5" />
-              <circle cx="40" cy="27" r="4" fill="none" stroke="#18121E" strokeWidth="1.5" />
-              <path d="M34 35C35 37 37 37 38 35" stroke="#18121E" strokeWidth="1.5" strokeLinecap="round" />
-              <path d="M18 64C20 48 28 44 36 44C44 44 48 48 50 64" fill="#CBB7F0" stroke="#18121E" strokeWidth="2" />
-
-              {/* Cheerful student kid */}
-              <circle cx="68" cy="30" r="12" fill="#FAF7F2" stroke="#18121E" strokeWidth="2" />
-              <path d="M58 24C60 16 68 18 78 22" stroke="#18121E" strokeWidth="2" fill="none" />
-              {/* Pigtails */}
-              <path d="M56 26C52 24 50 28 54 32" stroke="#18121E" strokeWidth="2" fill="#18121E" />
-              <path d="M80 26C84 24 86 28 82 32" stroke="#18121E" strokeWidth="2" fill="#18121E" />
-              <circle cx="65" cy="29" r="1.5" fill="#18121E" />
-              <circle cx="72" cy="29" r="1.5" fill="#18121E" />
-              <path d="M66 35C68 38 71 38 73 35" stroke="#18121E" strokeWidth="1.5" strokeLinecap="round" />
-              <path d="M54 64C56 50 62 44 70 44C78 44 84 50 86 64" fill="#F28F85" stroke="#18121E" strokeWidth="2" />
-            </svg>
+          {/* Upper portrait: Character 02 (cheerful child with both hands raised) */}
+          <div className="w-28 h-20 rounded-2xl bg-white border-2 border-ink flex items-center justify-center p-1 overflow-hidden shadow-[2px_2px_0px_#18121E]">
+            <Image
+              src="/characters/character-02.png"
+              alt="Tutr character - cheerful child"
+              width={112}
+              height={80}
+              className="w-full h-full object-contain"
+              priority
+            />
           </div>
 
-          {/* Lower portrait: girl student with long dark hair */}
+          {/* Lower portrait: Character 04 (woman with black hair) */}
           <div className="w-20 h-24 rounded-full bg-white border-2 border-ink flex items-center justify-center overflow-hidden shadow-[2px_2px_0px_#18121E]">
-            <svg viewBox="0 0 100 100" className="w-full h-full">
-              {/* Hair background */}
-              <path d="M26 35C22 55 20 75 30 85H70C80 75 78 55 74 35C74 15 62 12 50 12C38 12 26 15 26 35Z" fill="#18121E" />
-              {/* Head */}
-              <circle cx="50" cy="44" r="20" fill="#FAF7F2" stroke="#18121E" strokeWidth="2.5" />
-              {/* Hair bangs */}
-              <path d="M32 40C38 30 46 32 50 34C54 32 62 30 68 40" stroke="#18121E" strokeWidth="2.5" fill="#18121E" />
-              {/* Face */}
-              <circle cx="44" cy="44" r="2.5" fill="#18121E" />
-              <circle cx="56" cy="44" r="2.5" fill="#18121E" />
-              <path d="M47 52C49 55 51 55 53 52" stroke="#18121E" strokeWidth="2" strokeLinecap="round" />
-              {/* Blush */}
-              <circle cx="40" cy="48" r="3" fill="#F28F85" opacity="0.6" />
-              <circle cx="60" cy="48" r="3" fill="#F28F85" opacity="0.6" />
-              {/* Shirt */}
-              <path d="M24 95C26 76 36 70 50 70C64 70 74 76 76 95" fill="#FAF7F2" stroke="#18121E" strokeWidth="2.5" />
-            </svg>
+            <Image
+              src="/characters/character-04.png"
+              alt="Tutr character - learner"
+              width={80}
+              height={96}
+              className="w-full h-full object-cover"
+            />
           </div>
         </div>
       </div>
@@ -241,19 +198,16 @@ export function CommunityMapBanner({
       </div>
 
       <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
-        {/* Left character: Boy holding tablet */}
+        {/* Left character: Character 05 (curly-haired student in striped shirt) */}
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white border-2 border-ink p-1 shrink-0 shadow-[2.5px_2.5px_0px_#18121E]">
-            <svg viewBox="0 0 80 80" className="w-full h-full">
-              <circle cx="40" cy="32" r="18" fill="#FAF7F2" stroke="#18121E" strokeWidth="2" />
-              <path d="M22 28C22 14 30 10 40 10C50 10 58 14 58 28" fill="#18121E" />
-              <circle cx="34" cy="32" r="2" fill="#18121E" />
-              <circle cx="46" cy="32" r="2" fill="#18121E" />
-              <path d="M37 40C39 43 41 43 43 40" stroke="#18121E" strokeWidth="2" strokeLinecap="round" />
-              <path d="M18 78C20 58 30 54 40 54C50 54 60 58 62 78" fill="#F6BD75" stroke="#18121E" strokeWidth="2" />
-              {/* Tablet */}
-              <rect x="28" y="52" width="24" height="20" rx="3" fill="#CBB7F0" stroke="#18121E" strokeWidth="2" />
-            </svg>
+          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white border-2 border-ink overflow-hidden p-0.5 shrink-0 shadow-[2.5px_2.5px_0px_#18121E]">
+            <Image
+              src="/characters/character-05.png"
+              alt="Tutr character - student"
+              width={80}
+              height={80}
+              className="w-full h-full object-cover"
+            />
           </div>
           <div>
             <span className="text-[11px] font-bold uppercase tracking-wider text-ink-muted block">
@@ -279,19 +233,15 @@ export function CommunityMapBanner({
             </div>
           </div>
 
-          {/* Right character: Tutor educator pointing */}
-          <div className="hidden sm:flex w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white border-2 border-ink p-1 shrink-0 shadow-[2.5px_2.5px_0px_#18121E]">
-            <svg viewBox="0 0 80 80" className="w-full h-full">
-              <circle cx="40" cy="30" r="16" fill="#FAF7F2" stroke="#18121E" strokeWidth="2" />
-              <path d="M24 24C24 12 32 10 40 10C48 10 56 12 56 24" fill="#CBB7F0" />
-              <circle cx="34" cy="30" r="4.5" fill="none" stroke="#18121E" strokeWidth="1.5" />
-              <circle cx="46" cy="30" r="4.5" fill="none" stroke="#18121E" strokeWidth="1.5" />
-              <path d="M38 30H42" stroke="#18121E" strokeWidth="1.5" />
-              <circle cx="34" cy="30" r="1.5" fill="#18121E" />
-              <circle cx="46" cy="30" r="1.5" fill="#18121E" />
-              <path d="M37 38C39 40 41 40 43 38" stroke="#18121E" strokeWidth="1.8" strokeLinecap="round" />
-              <path d="M20 78C22 56 30 50 40 50C50 50 58 56 60 78" fill="#FFFFFF" stroke="#18121E" strokeWidth="2" />
-            </svg>
+          {/* Right character: Character 01 (bearded tutor) */}
+          <div className="hidden sm:flex w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white border-2 border-ink overflow-hidden p-0.5 shrink-0 shadow-[2.5px_2.5px_0px_#18121E]">
+            <Image
+              src="/characters/character-01.png"
+              alt="Tutr character - mentor"
+              width={80}
+              height={80}
+              className="w-full h-full object-cover"
+            />
           </div>
         </div>
       </div>
@@ -423,23 +373,28 @@ export function BooksStackDoodle({ className = "w-12 h-12" }: { className?: stri
  * Footer Avatars Cluster (center of footer from reference image)
  */
 export function FooterAvatarsCluster({ className = "" }: { className?: string }) {
-  const avatars = [
-    { bg: "#F6BD75", text: "👨‍🏫" },
-    { bg: "#CBB7F0", text: "👩‍🎓" },
-    { bg: "#F28F85", text: "🐶" },
-    { bg: "#68CEAA", text: "👨‍🎓" },
-    { bg: "#F6BD75", text: "👩‍🏫" },
+  const characters = [
+    { src: "/characters/character-01.png", alt: "Tutr character 1 - tutor with glasses" },
+    { src: "/characters/character-02.png", alt: "Tutr character 2 - cheerful student" },
+    { src: "/characters/character-03.png", alt: "Tutr character 3 - educator" },
+    { src: "/characters/character-04.png", alt: "Tutr character 4 - learner" },
+    { src: "/characters/character-05.png", alt: "Tutr character 5 - student" },
   ];
 
   return (
     <div className={`flex items-center justify-center -space-x-3 ${className}`}>
-      {avatars.map((av, i) => (
+      {characters.map((char, i) => (
         <div
           key={i}
-          className="w-12 h-12 sm:w-14 sm:h-14 rounded-full border-2 border-ink flex items-center justify-center text-xl sm:text-2xl shadow-[2px_2px_0px_#18121E] transition-transform hover:scale-110 hover:z-10"
-          style={{ backgroundColor: av.bg }}
+          className="w-12 h-12 sm:w-14 sm:h-14 rounded-full border-2 border-ink bg-white overflow-hidden shadow-[2px_2px_0px_#18121E] transition-transform hover:scale-110 hover:z-10"
         >
-          <span>{av.text}</span>
+          <Image
+            src={char.src}
+            alt={char.alt}
+            width={56}
+            height={56}
+            className="w-full h-full object-cover"
+          />
         </div>
       ))}
     </div>
