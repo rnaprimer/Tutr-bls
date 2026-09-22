@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+
+import React, { useState, useEffect } from "react";
 import { BookOpen, GraduationCap, CheckCircle2 } from "lucide-react";
 import { Button } from "./Button";
 import {
@@ -7,8 +9,95 @@ import {
   CommunityMapBanner,
   DoodleCloud,
 } from "./TutrIllustrations";
+import { createClient } from "@/lib/supabase/client";
 
-export function Hero() {
+export type RoleType = "ADMIN" | "TUTOR" | "STUDENT" | null;
+
+interface HeroProps {
+  initialRole?: RoleType;
+}
+
+export function Hero({ initialRole = null }: HeroProps) {
+  const [userRole, setUserRole] = useState<RoleType>(initialRole);
+
+  useEffect(() => {
+    const supabase = createClient();
+
+    async function loadAuth() {
+      try {
+        const {
+          data: { user: currentUser },
+        } = await supabase.auth.getUser();
+
+        if (!currentUser) {
+          setUserRole(null);
+          return;
+        }
+
+        const { data: profile } = await supabase
+          .from("users")
+          .select("role")
+          .eq("id", currentUser.id)
+          .maybeSingle();
+
+        if (profile?.role === "ADMIN") {
+          setUserRole("ADMIN");
+        } else if (profile?.role === "TUTOR") {
+          setUserRole("TUTOR");
+        } else {
+          // Check if user is a tutor via profile or application
+          const { data: tutorProf } = await supabase
+            .from("tutor_profiles")
+            .select("id")
+            .eq("user_id", currentUser.id)
+            .limit(1);
+
+          if (tutorProf && tutorProf.length > 0) {
+            setUserRole("TUTOR");
+          } else {
+            const { data: tutorApp } = await supabase
+              .from("tutor_applications")
+              .select("id")
+              .eq("user_id", currentUser.id)
+              .limit(1);
+
+            if (tutorApp && tutorApp.length > 0) {
+              setUserRole("TUTOR");
+            } else {
+              setUserRole("STUDENT");
+            }
+          }
+        }
+      } catch {
+        setUserRole(null);
+      }
+    }
+
+    if (initialRole === undefined) {
+      loadAuth();
+    }
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        loadAuth();
+      } else {
+        setUserRole(null);
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [initialRole]);
+
+  // Logged out or Admin: Show both buttons
+  // Logged-in Student: Show Student, hide Tutor
+  // Logged-in Tutor: Show Tutor, hide Student
+  const showStudent = userRole !== "TUTOR";
+  const showTutor = userRole !== "STUDENT";
+
   return (
     <section className="relative overflow-hidden pt-8 pb-16 md:pt-14 md:pb-24 bg-canvas-lavender border-b-2 border-ink">
       {/* Decorative subtle doodle clouds floating in background */}
@@ -51,26 +140,30 @@ export function Hero() {
 
             {/* Two Primary Action Choices matching reference pill style */}
             <div className="w-full max-w-md flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-4 mb-8">
-              <Button
-                href="/login?next=/student"
-                variant="student"
-                size="lg"
-                className="w-full sm:w-auto px-8 py-3.5 text-base font-bold justify-center"
-                icon={<BookOpen className="w-5 h-5 text-ink" />}
-                ariaLabel="I am a Student - Find a local tutor"
-              >
-                👉 I am a Student
-              </Button>
-              <Button
-                href="/login?next=/tutor"
-                variant="tutor"
-                size="lg"
-                className="w-full sm:w-auto px-8 py-3.5 text-base font-bold justify-center"
-                icon={<GraduationCap className="w-5 h-5 text-ink" />}
-                ariaLabel="I am a Tutor - Join as a local educator"
-              >
-                👉 I am a Tutor
-              </Button>
+              {showStudent && (
+                <Button
+                  href="/login?next=/student"
+                  variant="student"
+                  size="lg"
+                  className="w-full sm:w-auto px-8 py-3.5 text-base font-bold justify-center"
+                  icon={<BookOpen className="w-5 h-5 text-ink" />}
+                  ariaLabel="I am a Student - Find a local tutor"
+                >
+                  👉 I am a Student
+                </Button>
+              )}
+              {showTutor && (
+                <Button
+                  href="/login?next=/tutor"
+                  variant="tutor"
+                  size="lg"
+                  className="w-full sm:w-auto px-8 py-3.5 text-base font-bold justify-center"
+                  icon={<GraduationCap className="w-5 h-5 text-ink" />}
+                  ariaLabel="I am a Tutor - Join as a local educator"
+                >
+                  👉 I am a Tutor
+                </Button>
+              )}
             </div>
 
             {/* Trust highlights checklist */}
