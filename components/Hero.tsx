@@ -10,8 +10,9 @@ import {
   DoodleCloud,
 } from "./TutrIllustrations";
 import { createClient } from "@/lib/supabase/client";
+import { resolveUserRole, type RoleType } from "@/lib/auth/role";
 
-export type RoleType = "ADMIN" | "TUTOR" | "STUDENT" | null;
+export type { RoleType };
 
 interface HeroProps {
   initialRole?: RoleType;
@@ -21,73 +22,43 @@ export function Hero({ initialRole = null }: HeroProps) {
   const [userRole, setUserRole] = useState<RoleType>(initialRole);
 
   useEffect(() => {
+    let isMounted = true;
     const supabase = createClient();
 
-    async function loadAuth() {
-      try {
-        const {
-          data: { user: currentUser },
-        } = await supabase.auth.getUser();
-
-        if (!currentUser) {
-          setUserRole(null);
-          return;
-        }
-
-        const { data: profile } = await supabase
-          .from("users")
-          .select("role")
-          .eq("id", currentUser.id)
-          .maybeSingle();
-
-        if (profile?.role === "ADMIN") {
-          setUserRole("ADMIN");
-        } else if (profile?.role === "TUTOR") {
-          setUserRole("TUTOR");
-        } else {
-          // Check if user is a tutor via profile or application
-          const { data: tutorProf } = await supabase
-            .from("tutor_profiles")
-            .select("id")
-            .eq("user_id", currentUser.id)
-            .limit(1);
-
-          if (tutorProf && tutorProf.length > 0) {
-            setUserRole("TUTOR");
-          } else {
-            const { data: tutorApp } = await supabase
-              .from("tutor_applications")
-              .select("id")
-              .eq("user_id", currentUser.id)
-              .limit(1);
-
-            if (tutorApp && tutorApp.length > 0) {
-              setUserRole("TUTOR");
-            } else {
-              setUserRole("STUDENT");
-            }
-          }
-        }
-      } catch {
-        setUserRole(null);
+    async function syncAuth(userId?: string | null) {
+      if (!userId) {
+        if (isMounted) setUserRole(null);
+        return;
+      }
+      const role = await resolveUserRole(supabase, userId);
+      if (isMounted) {
+        setUserRole(role);
       }
     }
 
-    if (initialRole === undefined) {
-      loadAuth();
-    }
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session?.user) {
-        loadAuth();
-      } else {
+    // Verify active session on client mount
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!isMounted) return;
+      if (user) {
+        syncAuth(user.id);
+      } else if (initialRole === null || initialRole === undefined) {
         setUserRole(null);
       }
     });
 
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!isMounted) return;
+      if (event === "SIGNED_OUT" || !session?.user) {
+        setUserRole(null);
+      } else if (session?.user) {
+        syncAuth(session.user.id);
+      }
+    });
+
     return () => {
+      isMounted = false;
       subscription.unsubscribe();
     };
   }, [initialRole]);

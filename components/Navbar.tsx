@@ -24,6 +24,7 @@ import { Button } from "./Button";
 import { TutrLogoBook, DoodleCurvedArrow } from "./TutrIllustrations";
 import { createClient } from "@/lib/supabase/client";
 import type { User } from "@supabase/supabase-js";
+import { resolveUserRole } from "@/lib/auth/role";
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -64,24 +65,8 @@ export function Navbar() {
           "User";
         setDisplayName(name);
 
-        if (profile?.role === "ADMIN") {
-          setUserRole("ADMIN");
-        } else if (profile?.role === "TUTOR") {
-          setUserRole("TUTOR");
-        } else {
-          // Check if user has an application record
-          const { data: tutorApp } = await supabase
-            .from("tutor_applications")
-            .select("id")
-            .eq("user_id", currentUser.id)
-            .limit(1);
-
-          if (tutorApp && tutorApp.length > 0) {
-            setUserRole("TUTOR");
-          } else {
-            setUserRole("STUDENT");
-          }
-        }
+        const role = await resolveUserRole(supabase, currentUser.id);
+        setUserRole(role);
       } catch {
         setUser(null);
         setUserRole(null);

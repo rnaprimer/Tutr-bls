@@ -6,7 +6,7 @@ import { AudienceCards } from "@/components/AudienceCards";
 import { TrustSection } from "@/components/TrustSection";
 import { Footer } from "@/components/Footer";
 import { createClient } from "@/lib/supabase/server";
-import type { RoleType } from "@/components/Hero";
+import { resolveUserRole, type RoleType } from "@/lib/auth/role";
 
 export default async function Home() {
   let userRole: RoleType = null;
@@ -17,41 +17,7 @@ export default async function Home() {
       data: { user },
     } = await supabase.auth.getUser();
 
-    if (user) {
-      const { data: profile } = await supabase
-        .from("users")
-        .select("role")
-        .eq("id", user.id)
-        .maybeSingle();
-
-      if (profile?.role === "ADMIN") {
-        userRole = "ADMIN";
-      } else if (profile?.role === "TUTOR") {
-        userRole = "TUTOR";
-      } else {
-        const { data: tutorProf } = await supabase
-          .from("tutor_profiles")
-          .select("id")
-          .eq("user_id", user.id)
-          .limit(1);
-
-        if (tutorProf && tutorProf.length > 0) {
-          userRole = "TUTOR";
-        } else {
-          const { data: tutorApp } = await supabase
-            .from("tutor_applications")
-            .select("id")
-            .eq("user_id", user.id)
-            .limit(1);
-
-          if (tutorApp && tutorApp.length > 0) {
-            userRole = "TUTOR";
-          } else {
-            userRole = "STUDENT";
-          }
-        }
-      }
-    }
+    userRole = await resolveUserRole(supabase, user?.id);
   } catch {
     userRole = null;
   }
