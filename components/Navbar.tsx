@@ -24,12 +24,12 @@ import { Button } from "./Button";
 import { TutrLogoBook, DoodleCurvedArrow } from "./TutrIllustrations";
 import { createClient } from "@/lib/supabase/client";
 import type { User } from "@supabase/supabase-js";
-import { resolveUserRole } from "@/lib/auth/role";
+import { resolveUserRole, type RoleType } from "@/lib/auth/role";
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
-  const [userRole, setUserRole] = useState<"ADMIN" | "TUTOR" | "STUDENT" | null>(null);
+  const [userRole, setUserRole] = useState<RoleType>(null);
   const [displayName, setDisplayName] = useState<string>("");
 
   // Load user session dynamically on client
@@ -161,29 +161,99 @@ export function Navbar() {
 
             {/* Desktop Right CTAs with playful doodle arrow */}
             <div className="hidden md:flex items-center gap-3 relative">
-              {/* Little curved doodle arrow pointing to Tutor button */}
-              <div className="absolute -left-10 -top-4 pointer-events-none hidden lg:block">
-                <DoodleCurvedArrow className="w-9 h-9 text-ink" />
-              </div>
+              {/* ADMIN: Show Admin Dashboard button */}
+              {userRole === "ADMIN" && (
+                <Button
+                  href="/admin"
+                  variant="primary"
+                  size="sm"
+                  className="bg-mint-light"
+                  icon={<ShieldAlert className="w-4 h-4 text-ink" />}
+                  ariaLabel="Navigate to Admin Dashboard"
+                >
+                  Admin Dashboard
+                </Button>
+              )}
 
-              <Button
-                href="/login?next=/tutor"
-                variant="tutor"
-                size="sm"
-                icon={<GraduationCap className="w-4 h-4 text-ink" />}
-                ariaLabel="Navigate to Tutor Portal"
-              >
-                Join as a Tutor
-              </Button>
-              <Button
-                href="/login?next=/student"
-                variant="student"
-                size="sm"
-                icon={<BookOpen className="w-4 h-4 text-ink" />}
-                ariaLabel="Navigate to Student Portal"
-              >
-                Find a Tutor
-              </Button>
+              {/* USER (unreserved): Show Select Role button */}
+              {userRole === "USER" && (
+                <Button
+                  href="/select-role"
+                  variant="primary"
+                  size="sm"
+                  className="bg-honey"
+                  icon={<BookOpen className="w-4 h-4 text-ink" />}
+                  ariaLabel="Complete Role Selection"
+                >
+                  Select Role
+                </Button>
+              )}
+
+              {/* STUDENT: Show Student Dashboard and Directory Search */}
+              {userRole === "STUDENT" && (
+                <>
+                  <Button
+                    href="/tutors"
+                    variant="student"
+                    size="sm"
+                    icon={<Search className="w-4 h-4 text-ink" />}
+                    ariaLabel="Browse Tutors Directory"
+                  >
+                    Find a Tutor
+                  </Button>
+                  <Button
+                    href="/student"
+                    variant="primary"
+                    size="sm"
+                    className="bg-honey-light"
+                    icon={<BookOpen className="w-4 h-4 text-ink" />}
+                    ariaLabel="Navigate to Student Dashboard"
+                  >
+                    Student Dashboard
+                  </Button>
+                </>
+              )}
+
+              {/* TUTOR: Show Tutor Dashboard only */}
+              {userRole === "TUTOR" && (
+                <Button
+                  href="/tutor"
+                  variant="tutor"
+                  size="sm"
+                  icon={<GraduationCap className="w-4 h-4 text-ink" />}
+                  ariaLabel="Navigate to Tutor Dashboard"
+                >
+                  Tutor Dashboard
+                </Button>
+              )}
+
+              {/* LOGGED OUT: Show Join as a Tutor and Find a Tutor */}
+              {!user && (
+                <>
+                  {/* Little curved doodle arrow pointing to Tutor button */}
+                  <div className="absolute -left-10 -top-4 pointer-events-none hidden lg:block">
+                    <DoodleCurvedArrow className="w-9 h-9 text-ink" />
+                  </div>
+                  <Button
+                    href="/login?role=TUTOR&next=/tutor"
+                    variant="tutor"
+                    size="sm"
+                    icon={<GraduationCap className="w-4 h-4 text-ink" />}
+                    ariaLabel="Navigate to Tutor Portal"
+                  >
+                    Join as a Tutor
+                  </Button>
+                  <Button
+                    href="/login?role=STUDENT&next=/student"
+                    variant="student"
+                    size="sm"
+                    icon={<BookOpen className="w-4 h-4 text-ink" />}
+                    ariaLabel="Navigate to Student Portal"
+                  >
+                    Find a Tutor
+                  </Button>
+                </>
+              )}
             </div>
 
             {/* Mobile & Tablet Hamburger Toggle Button */}
@@ -258,7 +328,9 @@ export function Navbar() {
                       ? "🛡️ Administrator"
                       : userRole === "TUTOR"
                       ? "🎓 Verified Tutor"
-                      : "📖 Student"}
+                      : userRole === "STUDENT"
+                      ? "📖 Student"
+                      : "👤 Account Setup"}
                   </p>
                 </div>
               </div>
@@ -384,6 +456,23 @@ export function Navbar() {
                 </>
               )}
 
+              {/* AUTH STATE D: UNRESERVED USER */}
+              {user && userRole === "USER" && (
+                <Link
+                  href="/select-role"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-between py-3 px-4 text-sm font-black text-ink bg-warm-honey/40 rounded-2xl border-2 border-ink shadow-[2px_2px_0px_#18121E] hover:bg-warm-honey/50 active:translate-y-0.5 transition-all"
+                >
+                  <span className="flex items-center gap-3">
+                    <BookOpen className="w-4 h-4 text-ink" />
+                    <span>Complete Role Selection</span>
+                  </span>
+                  <span className="text-[10px] font-bold font-mono px-2 py-0.5 rounded-full bg-white border border-ink text-ink">
+                    Setup
+                  </span>
+                </Link>
+              )}
+
               {/* Informational: About (Placed before CTAs for logged out, or after dashboard for logged in) */}
               {!user && (
                 <>
@@ -413,7 +502,7 @@ export function Navbar() {
                 </>
               )}
 
-              {/* PRIMARY CTA: Find a Tutor (Available for all states) */}
+              {/* PRIMARY CTA: Find a Tutor (Directory Exploration) */}
               <Link
                 href="/tutors"
                 onClick={() => setMobileMenuOpen(false)}
@@ -428,10 +517,10 @@ export function Navbar() {
                 </span>
               </Link>
 
-              {/* SECONDARY CTA: Join as a Tutor (When NOT logged in as Tutor or Admin) */}
-              {(!user || userRole === "STUDENT") && (
+              {/* SECONDARY CTA: Join as a Tutor (ONLY for Logged-Out Users) */}
+              {!user && (
                 <Link
-                  href="/login?next=/tutor"
+                  href="/login?role=TUTOR&next=/tutor"
                   onClick={() => setMobileMenuOpen(false)}
                   className="flex items-center justify-between py-3.5 px-4 text-sm font-black text-ink bg-soft-purple rounded-2xl border-2 border-ink shadow-[3px_3px_0px_#18121E] hover:bg-soft-purple/90 active:translate-y-0.5 transition-all"
                 >

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { BookOpen, GraduationCap, CheckCircle2 } from "lucide-react";
+import { BookOpen, GraduationCap, CheckCircle2, ShieldCheck } from "lucide-react";
 import { Button } from "./Button";
 import {
   HeroLeftIllustration,
@@ -63,11 +63,16 @@ export function Hero({ initialRole = null }: HeroProps) {
     };
   }, [initialRole]);
 
-  // Logged out or Admin: Show both buttons
-  // Logged-in Student: Show Student, hide Tutor
-  // Logged-in Tutor: Show Tutor, hide Student
-  const showStudent = userRole !== "TUTOR";
-  const showTutor = userRole !== "STUDENT";
+  // Logged out: Show both Student and Tutor CTAs
+  // Logged-in Student: Show Student CTA only
+  // Logged-in Tutor: Show Tutor CTA only
+  // Logged-in Admin: Show Admin Dashboard CTA only
+  // Authenticated Unreserved User: Show Complete Role Selection CTA only
+  const isLoggedOut = userRole === null;
+  const isStudent = userRole === "STUDENT";
+  const isTutor = userRole === "TUTOR";
+  const isAdmin = userRole === "ADMIN";
+  const isUnreservedUser = userRole === "USER";
 
   return (
     <section className="relative overflow-hidden pt-8 pb-16 md:pt-14 md:pb-24 bg-canvas-lavender border-b-2 border-ink">
@@ -109,31 +114,88 @@ export function Hero({ initialRole = null }: HeroProps) {
               across Balasore for personal, focused learning.
             </p>
 
-            {/* Two Primary Action Choices matching reference pill style */}
+            {/* Role Action Choices */}
             <div className="w-full max-w-md flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-4 mb-8">
-              {showStudent && (
+              {/* ADMIN: Show Admin Dashboard only */}
+              {isAdmin && (
                 <Button
-                  href="/login?next=/student"
+                  href="/admin"
+                  variant="primary"
+                  size="lg"
+                  className="w-full sm:w-auto px-8 py-3.5 text-base font-bold justify-center bg-mint-light"
+                  icon={<ShieldCheck className="w-5 h-5 text-ink" />}
+                  ariaLabel="Navigate to Admin Dashboard"
+                >
+                  🛡️ Admin Dashboard
+                </Button>
+              )}
+
+              {/* USER (unreserved): Prompt to complete role selection */}
+              {isUnreservedUser && (
+                <Button
+                  href="/select-role"
+                  variant="primary"
+                  size="lg"
+                  className="w-full sm:w-auto px-8 py-3.5 text-base font-bold justify-center bg-honey"
+                  icon={<BookOpen className="w-5 h-5 text-ink" />}
+                  ariaLabel="Complete Role Selection"
+                >
+                  👉 Complete Role Selection
+                </Button>
+              )}
+
+              {/* STUDENT: Show Student button only */}
+              {isStudent && (
+                <Button
+                  href="/student"
                   variant="student"
                   size="lg"
                   className="w-full sm:w-auto px-8 py-3.5 text-base font-bold justify-center"
                   icon={<BookOpen className="w-5 h-5 text-ink" />}
-                  ariaLabel="I am a Student - Find a local tutor"
+                  ariaLabel="Navigate to Student Portal"
                 >
                   👉 I am a Student
                 </Button>
               )}
-              {showTutor && (
+
+              {/* TUTOR: Show Tutor button only */}
+              {isTutor && (
                 <Button
-                  href="/login?next=/tutor"
+                  href="/tutor"
                   variant="tutor"
                   size="lg"
                   className="w-full sm:w-auto px-8 py-3.5 text-base font-bold justify-center"
                   icon={<GraduationCap className="w-5 h-5 text-ink" />}
-                  ariaLabel="I am a Tutor - Join as a local educator"
+                  ariaLabel="Navigate to Tutor Portal"
                 >
                   👉 I am a Tutor
                 </Button>
+              )}
+
+              {/* LOGGED OUT: Show both Student and Tutor options with explicit role intent */}
+              {isLoggedOut && (
+                <>
+                  <Button
+                    href="/login?role=STUDENT&next=/student"
+                    variant="student"
+                    size="lg"
+                    className="w-full sm:w-auto px-8 py-3.5 text-base font-bold justify-center"
+                    icon={<BookOpen className="w-5 h-5 text-ink" />}
+                    ariaLabel="I am a Student - Find a local tutor"
+                  >
+                    👉 I am a Student
+                  </Button>
+                  <Button
+                    href="/login?role=TUTOR&next=/tutor"
+                    variant="tutor"
+                    size="lg"
+                    className="w-full sm:w-auto px-8 py-3.5 text-base font-bold justify-center"
+                    icon={<GraduationCap className="w-5 h-5 text-ink" />}
+                    ariaLabel="I am a Tutor - Join as a local educator"
+                  >
+                    👉 I am a Tutor
+                  </Button>
+                </>
               )}
             </div>
 

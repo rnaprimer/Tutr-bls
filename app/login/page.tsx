@@ -1,13 +1,17 @@
 import React from "react";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { BookOpen, GraduationCap, ShieldCheck, MapPin, ArrowLeft } from "lucide-react";
 import { GoogleSignInButton } from "@/components/GoogleSignInButton";
 import { sanitizeNextUrl } from "@/lib/supabase/middleware";
 import { TutrLogoBook } from "@/components/TutrIllustrations";
+import { createClient } from "@/lib/supabase/server";
+import { resolveUserRole } from "@/lib/auth/role";
 
 interface LoginPageProps {
   searchParams: Promise<{
     next?: string;
+    role?: string;
     error?: string;
   }>;
 }
@@ -18,8 +22,47 @@ export const metadata = {
 };
 
 export default async function LoginPage({ searchParams }: LoginPageProps) {
-  const { next, error } = await searchParams;
+  const { next, role: roleParam, error } = await searchParams;
   const safeNext = sanitizeNextUrl(next);
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  // If already authenticated, redirect based on authoritative role
+  if (user) {
+    const userRole = await resolveUserRole(supabase, user.id);
+    if (userRole === "STUDENT") {
+      if (roleParam === "TUTOR" || safeNext.startsWith("/tutor")) {
+        redirect("/student?notice=registered_as_student");
+      }
+      redirect("/student");
+    }
+    if (userRole === "TUTOR") {
+      if (roleParam === "STUDENT" || safeNext.startsWith("/student")) {
+        redirect("/tutor?notice=registered_as_tutor");
+      }
+      redirect("/tutor");
+    }
+    if (userRole === "ADMIN") {
+      redirect("/admin");
+    }
+    if (userRole === "USER") {
+      redirect("/select-role");
+    }
+    redirect(safeNext || "/");
+  }
+
+  // Determine effective intended role
+  let effectiveRole: string | undefined = undefined;
+  if (roleParam === "STUDENT" || roleParam === "TUTOR") {
+    effectiveRole = roleParam;
+  } else if (safeNext.startsWith("/student")) {
+    effectiveRole = "STUDENT";
+  } else if (safeNext.startsWith("/tutor")) {
+    effectiveRole = "TUTOR";
+  }
 
   // Role Context Metadata based on entry point
   let roleBadge = "Welcome to Tutr";
@@ -28,13 +71,13 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
   let roleHeading = "Sign in to Tutr";
   let roleDescription = "Learn better, locally. Connecting students and trusted tutors across Balasore, Odisha.";
 
-  if (safeNext === "/student") {
+  if (effectiveRole === "STUDENT" || safeNext === "/student") {
     roleBadge = "Student Entry";
     roleIcon = <BookOpen className="w-3.5 h-3.5 text-ink" />;
     roleBadgeBg = "bg-honey-light";
     roleHeading = "Student Sign In";
     roleDescription = "Sign in with Google to connect with verified local tutors across Balasore.";
-  } else if (safeNext === "/tutor") {
+  } else if (effectiveRole === "TUTOR" || safeNext === "/tutor") {
     roleBadge = "Tutor Entry";
     roleIcon = <GraduationCap className="w-3.5 h-3.5 text-ink" />;
     roleBadgeBg = "bg-purple-light";
@@ -109,7 +152,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
 
           {/* Google Sign In Component */}
           <div className="space-y-4">
-            <GoogleSignInButton next={safeNext} />
+            <GoogleSignInButton next={safeNext} role={effectiveRole} />
             <p className="text-[11px] text-center text-ink-muted leading-relaxed px-4 font-medium">
               By continuing with Google, you agree to Tutr&apos;s local learning terms and community standards.
             </p>

@@ -128,6 +128,7 @@ async function runValidation() {
     });
     if (e1) throw e1;
     userNoApp = u1.user;
+    await supabaseAdmin.from("users").update({ role: "TUTOR" }).eq("id", userNoApp.id);
 
     // 2. User with PENDING application
     const { data: u2, error: e2 } = await supabaseAdmin.auth.admin.createUser({
@@ -138,6 +139,7 @@ async function runValidation() {
     });
     if (e2) throw e2;
     userPending = u2.user;
+    await supabaseAdmin.from("users").update({ role: "TUTOR" }).eq("id", userPending.id);
 
     const { data: appPending, error: aErr1 } = await supabaseAdmin
       .from("tutor_applications")
@@ -167,6 +169,7 @@ async function runValidation() {
     });
     if (e3) throw e3;
     userUnderReview = u3.user;
+    await supabaseAdmin.from("users").update({ role: "TUTOR" }).eq("id", userUnderReview.id);
 
     const { data: appReview, error: aErr2 } = await supabaseAdmin
       .from("tutor_applications")
@@ -196,6 +199,7 @@ async function runValidation() {
     });
     if (e4) throw e4;
     userApproved = u4.user;
+    await supabaseAdmin.from("users").update({ role: "TUTOR" }).eq("id", userApproved.id);
 
     const { data: appApproved, error: aErr3 } = await supabaseAdmin
       .from("tutor_applications")
@@ -226,6 +230,7 @@ async function runValidation() {
     });
     if (e5) throw e5;
     userRejected = u5.user;
+    await supabaseAdmin.from("users").update({ role: "TUTOR" }).eq("id", userRejected.id);
 
     const testRejectionReason = "Submitted documents were blurred and could not be verified.";
     const { data: appRejected, error: aErr4 } = await supabaseAdmin

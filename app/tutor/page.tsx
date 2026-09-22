@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { User } from "lucide-react";
+import { User, GraduationCap } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { SignOutButton } from "@/components/SignOutButton";
 import {
@@ -15,7 +15,14 @@ export const metadata = {
   description: "Connect with local students across Balasore, Odisha. Tutor application portal.",
 };
 
-export default async function TutorPage() {
+interface TutorPageProps {
+  searchParams?: Promise<{
+    notice?: string;
+  }>;
+}
+
+export default async function TutorPage({ searchParams }: TutorPageProps) {
+  const { notice } = (await searchParams) || {};
   const supabase = await createClient();
   const {
     data: { user },
@@ -149,7 +156,22 @@ export default async function TutorPage() {
       </header>
 
       {/* Main Tutor Application Experience */}
-      <main className="flex-1 flex items-center justify-center px-4 py-12 sm:py-20">
+      <main className="flex-1 flex flex-col items-center justify-center px-4 py-12 sm:py-20">
+        {notice === "registered_as_tutor" && (
+          <div
+            role="alert"
+            className="max-w-xl w-full mb-6 p-4 rounded-2xl bg-purple-light border-2 border-ink text-xs font-bold text-ink text-left shadow-[2.5px_2.5px_0px_#18121E]"
+          >
+            <div className="flex items-center gap-2 mb-1 text-ink font-black">
+              <GraduationCap className="w-4 h-4 text-ink" />
+              <span className="uppercase tracking-wider text-[11px]">Role Information</span>
+            </div>
+            <p className="text-ink/80 leading-relaxed font-medium">
+              This Google account is registered as a <strong>Tutor</strong>. You cannot switch this account to Student.
+            </p>
+          </div>
+        )}
+
         <TutorApplicationStatus
           application={primaryApplication}
           displayName={displayName}

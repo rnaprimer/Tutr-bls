@@ -797,6 +797,20 @@ export type Database = {
         Args: { p_application_id: string; p_rejection_reason: string }
         Returns: Json
       }
+      reserve_user_role: {
+        Args: {
+          p_user_id: string
+          p_requested_role: Database["public"]["Enums"]["user_role"]
+        }
+        Returns: Json
+      }
+      admin_override_user_role: {
+        Args: {
+          p_target_user_id: string
+          p_new_role: Database["public"]["Enums"]["user_role"]
+        }
+        Returns: Json
+      }
       start_tutor_application_review: {
         Args: { p_application_id: string }
         Returns: Json

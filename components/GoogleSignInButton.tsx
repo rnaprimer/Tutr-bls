@@ -6,6 +6,7 @@ import { Loader2 } from "lucide-react";
 
 interface GoogleSignInButtonProps {
   next?: string;
+  role?: string;
   className?: string;
 }
 
@@ -27,6 +28,7 @@ function getAppBaseUrl(): string {
 
 export function GoogleSignInButton({
   next = "/",
+  role,
   className = "",
 }: GoogleSignInButtonProps) {
   const [loading, setLoading] = useState(false);
@@ -39,7 +41,11 @@ export function GoogleSignInButton({
 
       const supabase = createClient();
       const baseUrl = getAppBaseUrl();
-      const callbackUrl = `${baseUrl}/auth/callback?next=${encodeURIComponent(next)}`;
+      let callbackPath = `/auth/callback?next=${encodeURIComponent(next)}`;
+      if (role) {
+        callbackPath += `&role=${encodeURIComponent(role)}`;
+      }
+      const callbackUrl = `${baseUrl}${callbackPath}`;
 
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",

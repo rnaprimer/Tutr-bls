@@ -23,6 +23,7 @@ export function sanitizeNextUrl(next: string | null | undefined): string {
     "/admin",
     "/admin/applications",
     "/tutors",
+    "/select-role",
   ];
   const sanitized = next.trim();
 
@@ -77,14 +78,15 @@ export async function updateSession(request: NextRequest) {
 
   const pathname = request.nextUrl.pathname;
   // /tutors and /tutors/* are public marketplace discovery;
-  // /student, /student/*, /tutor, /tutor/*, /admin, /admin/* are protected portals.
+  // /student, /student/*, /tutor, /tutor/*, /admin, /admin/*, /select-role are protected portals.
   const isProtectedPath =
     pathname === "/student" ||
     pathname.startsWith("/student/") ||
     pathname === "/tutor" ||
     pathname.startsWith("/tutor/") ||
     pathname === "/admin" ||
-    pathname.startsWith("/admin/");
+    pathname.startsWith("/admin/") ||
+    pathname === "/select-role";
 
   // If user is unauthenticated and tries to access a protected route,
   // redirect to canonical login with the sanitized next path.
@@ -92,18 +94,6 @@ export async function updateSession(request: NextRequest) {
     const loginUrl = new URL("/login", request.url);
     loginUrl.searchParams.set("next", sanitizeNextUrl(pathname));
     const redirectResponse = NextResponse.redirect(loginUrl);
-    // Preserve any updated session cookies
-    supabaseResponse.cookies.getAll().forEach((c) => {
-      redirectResponse.cookies.set(c.name, c.value);
-    });
-    return redirectResponse;
-  }
-
-  // If user is already authenticated and visits /login, redirect them to their intended portal
-  if (user && pathname === "/login") {
-    const nextParam = request.nextUrl.searchParams.get("next");
-    const destination = sanitizeNextUrl(nextParam);
-    const redirectResponse = NextResponse.redirect(new URL(destination, request.url));
     // Preserve any updated session cookies
     supabaseResponse.cookies.getAll().forEach((c) => {
       redirectResponse.cookies.set(c.name, c.value);

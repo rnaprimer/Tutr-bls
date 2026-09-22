@@ -10,7 +10,14 @@ export const metadata = {
   description: "Find local tutors across Balasore, Odisha. Student portal.",
 };
 
-export default async function StudentPage() {
+interface StudentPageProps {
+  searchParams?: Promise<{
+    notice?: string;
+  }>;
+}
+
+export default async function StudentPage({ searchParams }: StudentPageProps) {
+  const { notice } = (await searchParams) || {};
   const supabase = await createClient();
   const {
     data: { user },
@@ -57,6 +64,22 @@ export default async function StudentPage() {
       {/* Main Student Shell Content */}
       <main className="flex-1 flex items-center justify-center px-4 py-12 sm:py-16">
         <div className="max-w-2xl w-full tutr-card bg-white p-8 sm:p-12 text-center">
+          {/* Role Mismatch Notice */}
+          {notice === "registered_as_student" && (
+            <div
+              role="alert"
+              className="mb-8 p-4 rounded-2xl bg-honey-light border-2 border-ink text-xs font-bold text-ink text-left shadow-[2.5px_2.5px_0px_#18121E]"
+            >
+              <div className="flex items-center gap-2 mb-1 text-coral font-black">
+                <BookOpen className="w-4 h-4" />
+                <span className="uppercase tracking-wider text-[11px]">Role Information</span>
+              </div>
+              <p className="text-ink/80 leading-relaxed font-medium">
+                This Google account is registered as a <strong>Student</strong>. You cannot switch this account to Tutor.
+              </p>
+            </div>
+          )}
+
           {/* Icon */}
           <div className="w-16 h-16 rounded-2xl bg-honey/30 border-2 border-ink flex items-center justify-center text-ink mx-auto mb-6 shadow-[3px_3px_0px_#18121E]">
             <BookOpen className="w-8 h-8 text-warm-coral" />
